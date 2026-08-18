@@ -11,10 +11,10 @@ project:
     two-element multisets from A, repeated summands are allowed, and "no
     unique sum" means that every such multiset has a distinct equal-sum mate.
   authors:
-    - "Xinjie"
+    - "Xinjie He"
   license: "Apache-2.0"
   responsible_maintainers:
-    - "Xinjie"
+    - "Xinjie He"
 
 classification:
   arxiv: [math.CO, math.NT]
@@ -23,15 +23,16 @@ classification:
 sources:
   - title: "A near-quadratic lower bound for sets with no unique sums"
     authors:
-      - "Xinjie"
-    id: "NUS_edited.tex at the submitted repository commit"
+      - "Xinjie He"
     type: "paper"
     location: "NUS_edited.tex"
     relationship: "formalizes"
     note: >-
       The Lean development formalizes the lower-bound theorem and its proof
-      from this working draft.  The draft is included in the repository so
-      that the informal and formal arguments can be reviewed together.
+      from this working draft. The draft is included in the repository so
+      that the informal and formal statements and arguments can be reviewed
+      together. The repository commit submitted to Palomar fixes the exact
+      version of the draft used by the formalization.
     author_endorsement: "participated"
   - title: "On unique sums in Abelian groups"
     authors:
@@ -45,14 +46,16 @@ sources:
       upper-bound construction cited in the paper.  The upper bound is not
       re-formalized here.
     author_endorsement: "not-contacted"
-  - title: "100 open problems, Problem 27"
+  - title: "100 Open Problems"
     authors:
       - "Ben Green"
     id: "https://people.maths.ox.ac.uk/greenbj/papers/open-problems.pdf"
     type: "paper"
     location: "https://people.maths.ox.ac.uk/greenbj/papers/open-problems.pdf"
     relationship: "background"
-    note: "The source of the open problem studied by the project."
+    note: >-
+      Problem 27 in this collection is the source of the open problem studied
+      by the project.
     author_endorsement: "not-contacted"
 
 related_formalizations: []
@@ -128,7 +131,7 @@ fidelity:
 review:
   status: "self-assessed and agent-reviewed"
   reviewers:
-    - "Xinjie"
+    - "Xinjie He"
     - "OpenAI Codex"
   notes: >-
     The repository has been built with the pinned Lean toolchain, searched for

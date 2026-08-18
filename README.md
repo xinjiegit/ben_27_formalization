@@ -46,7 +46,7 @@ external result.
 
 ## Authors, process, and licence
 
-The formalization and working paper are maintained by Xinjie.  The work combined
+The formalization and working paper are maintained by Xinjie He.  The work combined
 human mathematical direction with AI-assisted proof engineering using OpenAI
 Codex; [`formalization.yaml`](formalization.yaml) records the process, provenance,
 scope, fidelity notes, and review status in detail.  No independent human peer
