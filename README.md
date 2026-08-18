@@ -15,6 +15,35 @@ The formalization proves the lower bound.  It does not re-formalize Bedert's
 external `O((log p)²)` upper bound, so the paper's full asymptotic corollary uses
 that cited result in addition to the Lean theorem.
 
+## Exact informal-to-formal correspondence
+
+The declaration submitted to Comparator is `NUS.m_lower_bound`.  Its complete
+mathematical reading is:
+
+> There exist an absolute real constant `c > 0` and a natural-number threshold
+> `p₀` such that, for every natural number `p`, if `p` is prime and `p ≥ p₀`, then
+> `m(p) ≥ c (log p / log log p)²`.
+
+The notation in that sentence corresponds to Lean as follows:
+
+| Informal mathematics | Lean representation |
+|---|---|
+| prime field `𝔽_p` | `ZMod p`, under the hypothesis `Fact p.Prime` |
+| unordered pair from `A` | a `Multiset` of cardinality two whose entries lie in `A` |
+| repeated representation `{a,a}` | allowed, because a multiset rather than a two-element set is used |
+| no unique sum | every pair multiset has a distinct pair multiset with the same sum |
+| `m(p)` | `Nat.sInf` of the attainable cardinalities at least two; `m_spec` proves attainment for odd primes |
+| `log` | `Real.log`, the natural logarithm |
+| sufficiently large | an existential threshold `∃ p₀`; the proof can take `p₀ = 64` |
+| absolute implied constant | an existential real `∃ c, 0 < c`, independent of `p` |
+
+There is no known weakening or extra mathematical hypothesis in the formal
+lower-bound statement.  The only scope boundary is that the cited upper bound
+`m(p) = O((log p)²)` is not proved in Lean here.  Consequently this repository
+proves Theorem 1.2 and the lower-bound half of the asymptotic corollary, while
+the full equality `m(p) = (log p)^{2+o(1)}` additionally relies on Bedert's
+external result.
+
 ## Authors, process, and licence
 
 The formalization and working paper are maintained by Xinjie.  The work combined

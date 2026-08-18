@@ -4,9 +4,12 @@ version: "v0.4"
 project:
   name: "NUSLean"
   description: >-
-    A Lean 4 and Mathlib formalization of a near-quadratic lower bound for the
-    minimum size of a subset of a prime field in which no sum has a unique
-    unordered representation.
+    A Lean 4 and Mathlib proof that there are absolute constants c > 0 and
+    p₀ such that, for every prime p ≥ p₀, the minimum size m(p) of a set
+    A ⊆ 𝔽_p with |A| ≥ 2 and no uniquely represented sum satisfies
+    m(p) ≥ c (log p / log log p)².  Here representations are unordered
+    two-element multisets from A, repeated summands are allowed, and "no
+    unique sum" means that every such multiset has a distinct equal-sum mate.
   authors:
     - "Xinjie"
   license: "Apache-2.0"
@@ -56,13 +59,19 @@ related_formalizations: []
 
 status:
   scope: >-
-    The project fully proves the near-quadratic lower bound, both for every
-    finite no-unique-sum set in a sufficiently large prime field and for the
-    minimum m(p).  It also formalizes the intermediate collision-lattice,
-    clean-rectangle, common-cut, contraction, compression, and determinant
-    arguments used by the proof.  The external O((log p)^2) upper bound is
-    cited but not formalized, so the project proves only the lower-bound half
-    of the paper's final asymptotic corollary.
+    The compared declaration NUS.m_lower_bound says exactly that there exist
+    a real constant c with 0 < c and a natural-number threshold p₀ such that,
+    for every natural number p, if p is prime and p₀ ≤ p, then
+    c * (Real.log p / Real.log (Real.log p))^2 ≤ m p.  Natural numbers are
+    coerced to reals in this inequality.  The definition m p is the infimum
+    in ℕ of cardinalities k for which there is a finite A ⊆ ZMod p with
+    A.card = k, 2 ≤ k, and no unique sum.  The project also proves the
+    stronger setwise statement for every such A and formalizes all
+    intermediate collision-lattice, clean-rectangle, common-cut,
+    contraction, compression, determinant, and numerical-reduction
+    arguments.  It does not formalize Bedert's external O((log p)^2) upper
+    bound, so it proves the lower bound but not the full asymptotic equality
+    m(p) = (log p)^(2+o(1)) without using that cited result.
   sorry_count: 0
   sorry_in_definitions: 0
   axioms: [propext, Classical.choice, Quot.sound]
@@ -104,12 +113,17 @@ automation:
 
 fidelity:
   divergences: >-
-    The formal definition uses the paper's equivalent multiset formulation:
-    each unordered pair from A has a distinct equal-sum mate, with repeated
-    elements allowed.  The Lean proof makes "sufficiently large" explicit via
-    the threshold used internally (64).  The lower bound is fully formalized;
-    Bedert's external upper bound, and therefore the full asymptotic equality
-    in the paper's corollary, is not.
+    No divergence is known in the lower-bound theorem.  ZMod p represents the
+    prime field 𝔽_p.  Real.log is the natural logarithm; changing the logarithm
+    base only changes the absolute constant.  The formal definition uses the
+    paper's stated equivalent multiset formulation: every unordered
+    two-element multiset from A has a different unordered multiset from A
+    with the same sum, and a repeated pair {a,a} is allowed.  The existential
+    phrase "sufficiently large" is represented by ∃ p₀ and the proof can take
+    p₀ = 64.  The definition uses Nat.sInf, but the development proves that
+    the defining set is nonempty and the infimum is attained for odd primes.
+    Bedert's external upper bound is cited rather than formalized, so the full
+    asymptotic equality in the paper's corollary is outside the proved scope.
 
 review:
   status: "self-assessed and agent-reviewed"
@@ -130,8 +144,10 @@ alignment:
       module: "NUSLean.Main"
       status: "proved"
       note: >-
-        This is the headline lower bound for m(p) and the declaration recorded
-        in comparator.json.
+        This is the headline lower bound for m(p), with the same quantifiers,
+        prime-field setting, repeated-summand convention, and asymptotic
+        expression as Theorem 1.2.  It is the sole declaration recorded in
+        comparator.json.
     - source: "Theorem 1.2, setwise form used in the proof"
       lean: "NUS.main_lower_bound"
       module: "NUSLean.Main"
