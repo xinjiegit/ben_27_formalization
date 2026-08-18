@@ -1,0 +1,938 @@
+\documentclass[10pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[margin=1in]{geometry}
+\usepackage{microtype}
+\usepackage{xurl}
+\usepackage[hidelinks]{hyperref}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\allowdisplaybreaks
+
+\title{A near-quadratic lower bound for sets with no unique sums}
+\author{Working draft for proof audit}
+\date{July 21, 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+For a prime $p$, let $m(p)$ be the least cardinality of a set
+$A\subseteq\mathbb F_p$, $|A|\ge2$, for which every element of $A+A$ has at
+least two distinct representations by unordered pairs from $A$.  We prove
+\[
+    m(p)\gg
+    \left(\frac{\log p}{\log\log p}\right)^2.
+\]
+Together with the known construction $m(p)\ll(\log p)^2$, this gives
+$m(p)=(\log p)^{2+o(1)}$.  The argument associates an integral collision
+lattice to an inclusion-minimal example.  A clean-rectangle determinant
+bound supplies a short relation between every pair of light blocks, and a
+batched contraction reduces the lattice to
+$O(\sqrt n+n/\log p)$ core coordinates while keeping all coefficients
+polynomial in $n$.
+\end{abstract}
+
+\section{Statement and collision lattice}
+
+\begin{definition}
+Let $A$ be a finite subset of an abelian group.  An \emph{unordered
+representation} of $s\in A+A$ is a two-element multiset $\{a,b\}$ with
+$a,b\in A$, where $a=b$ is allowed, such that
+\[
+    s=a+b.
+\]
+Thus $\{a,b\}$ and $\{b,a\}$ are the same representation.  We say that
+$A$ \emph{has no unique sum} if every $s\in A+A$ has at least two distinct
+unordered representations.
+
+Equivalently, for every two-element multiset $\{a,b\}$ from $A$, there is a
+different multiset $\{c,d\}\ne\{a,b\}$ from $A$ such that
+\[
+    a+b=c+d.
+\]
+\end{definition}
+
+Thus Problem 27 in Green's list asks for the asymptotic order of
+\[
+    m(p):=\min\bigl\{|A|:A\subseteq\mathbb F_p,\ |A|\ge2,\
+                         A\text{ has no unique sum}\bigr\}.
+\]
+Bedert proved the previously strongest lower bound and an
+$O((\log p)^2)$ upper bound~\cite{bedert}.  His construction, together with
+the observation that $B+B$ has no unique sum whenever $B$ is balanced,
+gives
+\[
+    m(p)\le\left(\frac12+o(1)\right)(\log_2p)^2.
+\]
+
+\begin{theorem}
+There is an absolute constant $c>0$ such that, for every sufficiently large
+prime $p$,
+\[
+    m(p)\ge
+    c\left(\frac{\log p}{\log\log p}\right)^2.
+\]
+\end{theorem}
+
+We begin the proof by introducing the collision lattice associated with an
+inclusion-minimal set having no unique sum.  Fix a set
+\[
+    A=\{a_1,\ldots,a_n\}\subseteq\mathbb F_p
+\]
+that is inclusion-minimal among sets having no unique sum.  Every set having
+no unique sum contains such an inclusion-minimal subset, so it suffices to
+bound $n$.
+
+Put
+\[
+    \Omega:=\{(i,j):1\le i\le j\le n\}.
+\]
+We regard each $(i,j)\in\Omega$ as an unordered index pair; the condition
+$i\le j$ chooses a unique ordering, and pairs with $i=j$ are allowed.  For
+$t=(i,j)\in\Omega$, put
+\[
+    u_t:=e_i+e_j\in\mathbb Z^n.
+\]
+In particular, $u_{(i,i)}=2e_i$.
+
+Define the sum map
+\[
+    \sigma:\Omega\longrightarrow\mathbb F_p,
+    \qquad
+    \sigma(i,j)=a_i+a_j.
+\]
+Partition $\Omega$ into the fibers of $\sigma$; thus, two index pairs lie in
+the same fiber exactly when they represent the same sum.  Since $A$ has no
+unique sum, every fiber contains at least two pairs.  On every fiber choose
+one cyclic permutation, and write $\mu:\Omega\to\Omega$ for the union of
+these cycles.  In particular, $\mu$ has no fixed point.  Define
+\[
+    \rho_t:=u_t-u_{\mu(t)},
+    \qquad
+    \Lambda:=\operatorname{span}_{\mathbb Z}
+                  \{\rho_t:t\in\Omega\}\subseteq\mathbb Z^n.
+\]
+
+\begin{lemma}[Rank and modular defect]
+The lattice $\Lambda$ has rational rank $n-1$.  Modulo $p$, its row rank is
+at most $n-2$.  Consequently every $(n-1)$-row matrix with rows in
+$\Lambda$ has all its maximal minors divisible by $p$.
+\end{lemma}
+
+\begin{proof}
+Let $x=(x_1,\ldots,x_n)\in\mathbb Q^n$ be orthogonal to every $\rho_t$.
+Then $x_i+x_j$ is constant as $t=(i,j)$ runs around any one
+$\mu$-cycle.  Suppose that $x$ is not constant, and let $M$ be the nonempty
+proper set of indices on which $x_i$ is maximal.  If $t=(i,j)$ has both
+$i,j\in M$, then $x_i+x_j$ is the largest possible pair value.  Equality
+\[
+    u_t\cdot x=u_{\mu(t)}\cdot x
+\]
+therefore forces both endpoints of $\mu(t)$ to lie in $M$.  Hence $\mu$
+maps the finite set of pairs $(i,j)\in\Omega$ with $i,j\in M$ into itself
+and therefore onto itself.  Since $\mu(t)\ne t$, every such index pair has a
+distinct equal-sum mate whose two endpoints also lie in $M$.  The set $M$
+is not a singleton, because its loop would otherwise have no distinct
+internal mate.  Thus $\{a_i:i\in M\}$ is a proper subset of $A$ having no
+unique sum, contrary to inclusion-minimality.  It follows that the rational
+kernel consists exactly of the constant vectors, and hence
+\[
+    \operatorname{rank}_{\mathbb Q}\Lambda=n-1.
+\]
+
+Over $\mathbb F_p$, both
+\[
+    \mathbf 1=(1,\ldots,1)
+    \qquad\text{and}\qquad
+    a=(a_1,\ldots,a_n)
+\]
+are orthogonal to every $\rho_t$.  They are linearly independent because
+the elements of $A$ are distinct and $n\ge2$.  The modular row rank is
+therefore at most $n-2$.  Any maximal minor of any $(n-1)$-row matrix whose
+rows lie in $\Lambda$ vanishes modulo $p$, which proves the final assertion.
+\end{proof}
+
+\section{Clean rectangles}
+
+For disjoint nonempty $X,Y\subseteq[n]$, write $X\times Y$ for the set of
+unordered index pairs having one index in $X$ and the other in $Y$.  We call
+this the \emph{rectangle determined by $X$ and $Y$}.
+
+\begin{lemma}[Clean rectangle]
+If
+\[
+    \mu(X\times Y)\subseteq X\times Y,
+\]
+then
+\[
+    |X|+|Y|\ge\log_2p+2.
+\]
+\end{lemma}
+
+\begin{proof}
+Since $\mu$ is a bijection and $X\times Y$ is finite, the displayed
+inclusion is equality.  Choose nonempty $X'\subseteq X$ and
+$Y'\subseteq Y$ so that $X'\times Y'$ is invariant and
+$|X'|+|Y'|$ is minimal.  Put
+\[
+    x=|X'|,
+    \qquad
+    y=|Y'|,
+\]
+and consider the rows $\rho_t$, $t\in X'\times Y'$, restricted to the
+$x+y$ columns $X'\cup Y'$.
+
+We first claim that their rational rank is $x+y-2$.  Their kernel contains
+the two vectors that are constant on one side and zero on the other.
+Conversely, let $(\alpha_i)_{i\in X'}$ and $(\beta_j)_{j\in Y'}$ lie in the
+kernel.  Thus, whenever the index pair with endpoints $i,j$ is mapped by
+$\mu$ to the index pair with endpoints $i',j'$,
+\[
+    \alpha_i+\beta_j=\alpha_{i'}+\beta_{j'}.
+\]
+Let $X_{\max}$ and $Y_{\max}$ be the respective maximizer sets.  The last
+equality shows that $\mu$ maps $X_{\max}\times Y_{\max}$ into itself.
+Minimality of $X'\times Y'$ implies
+\[
+    X_{\max}=X',
+    \qquad
+    Y_{\max}=Y'.
+\]
+Thus every $\alpha_i$ is equal and every $\beta_j$ is equal.  The kernel has
+dimension two, proving the claim.
+
+Choose $x+y-2$ independent rows, and delete one column from each side.  The
+resulting square matrix has a nonzero determinant $D$: the row space is
+precisely the direct sum of the two zero-sum coordinate spaces, for which
+deleting one coordinate on each side is an isomorphism.  Modulo $p$, the two
+side-constant vectors and the label vector
+\[
+    (a_i)_{i\in X'\cup Y'}
+\]
+all lie in the kernel.  The last vector is not a linear combination of the
+first two.  Indeed, at least one side has two elements, since a one-pair
+rectangle cannot be invariant under the fixed-point-free map $\mu$, and
+distinct indices label distinct elements of $\mathbb F_p$.  Hence $p\mid D$.
+
+On the $X'$-columns, each row is a difference $e_i-e_{i'}$ of two standard
+basis vectors, and similarly on the $Y'$-columns.  Laplace expansion across
+the $x-1$ retained $X'$-columns expresses $D$ as at most
+\[
+    \binom{x+y-2}{x-1}
+\]
+products of minors of matrices whose rows are differences of two standard
+basis vectors.  Such matrices are totally unimodular, so every product is
+zero or has absolute value one.  Therefore
+\[
+    p\le|D|\le\binom{x+y-2}{x-1}\le2^{x+y-2}.
+\]
+This is equivalent to $x+y\ge\log_2p+2$, and
+$x\le|X|$, $y\le|Y|$ finish the proof.
+\end{proof}
+
+\section{A common random cut}
+
+The following elementary hitting lemma is the probabilistic input in the
+contraction.  We first introduce the objects that occur in its statement.
+
+Let $V$ be a finite set.  A \emph{configuration on $V$} is a pair
+$(j,\tau)$, where $j\in V$ and $\tau$ is a two-element multiset drawn from
+$V$, with $j\notin\operatorname{supp}(\tau)$.  If $\tau=\{v,w\}$, define
+\[
+    \operatorname{supp}(\tau):=\{v,w\},
+\]
+regarded as an ordinary set; thus,
+$\operatorname{supp}(\{v,v\})=\{v\}$.
+
+A set $T\subseteq V$ \emph{hits} the configuration $(j,\tau)$ if
+\[
+    j\in T
+    \qquad\text{and}\qquad
+    T\cap\operatorname{supp}(\tau)\ne\varnothing.
+\]
+It hits a family of configurations if it hits at least one member of that
+family.
+
+\begin{lemma}[Common-cut lemma]
+For every $\alpha>0$, there exist constants $D,m_0>0$, depending only on
+$\alpha$, with the following property.  Let $V$ be a set of size
+$m\ge m_0$, and let
+\[
+    \mathcal F=\{(j_t,\tau_t):1\le t\le s\}
+\]
+be a family of configurations on $V$, where $s\ge\alpha m$.  Suppose that
+$j_1,\ldots,j_s$ are pairwise distinct and that
+$\tau_1,\ldots,\tau_s$ are pairwise distinct.  Then there is a set
+$T\subseteq V$, with
+\[
+    |T|\le D\sqrt m,
+\]
+that hits $\mathcal F$.
+
+Moreover, suppose that
+\[
+    \mathcal F_1,\ldots,\mathcal F_q,
+    \qquad q\le m,
+\]
+are families of configurations on the same set $V$, each satisfying the
+preceding assumptions.  Then there is a single set $T\subseteq V$, with
+$|T|\le D\sqrt m$, that hits all but at most $m/8$ of these families.
+\end{lemma}
+
+\begin{proof}
+We first analyze one family
+$\mathcal F=\{(j_t,\tau_t):1\le t\le s\}$.  Randomly partition $V$ as
+\[
+    V=P\sqcup Q.
+\]
+Retain a configuration $(j_t,\tau_t)$ if
+\[
+    j_t\in P
+    \qquad\text{and}\qquad
+    \operatorname{supp}(\tau_t)\subseteq Q.
+\]
+Because $j_t\notin\operatorname{supp}(\tau_t)$ and the support of $\tau_t$
+has at most two elements, each configuration is retained with probability
+at least $1/8$.  Hence the expected number of retained configurations is at
+least
+\[
+    \frac{s}{8}\ge\frac{\alpha m}{8}.
+\]
+We may therefore fix a partition $V=P\sqcup Q$ for which the set
+$\mathcal R$ of retained configurations satisfies
+\[
+    r:=|\mathcal R|\ge\frac{\alpha m}{8}.
+\]
+
+Let
+\[
+    \theta=\frac{C}{\sqrt m},
+\]
+where $C=C(\alpha)$ will be chosen later.  By increasing $m_0$, we may
+assume that $\theta\le 1/2$.  Construct $T\subseteq V$ by including each
+element independently with probability $\theta$.
+
+First expose the choices defining $T\cap P$.  A retained configuration
+$(j_t,\tau_t)$ is called \emph{activated} if $j_t\in T$.  Since the $j_t$
+are pairwise distinct, the activation events are independent, each with
+probability $\theta$.
+
+Let $Z$ be the number of elements $v\in Q$ that belong to the support of at
+least one activated configuration.  For each $v\in Q$, define
+\[
+    d_v:=
+    \bigl|\{t:(j_t,\tau_t)\in\mathcal R,
+                    \ v\in\operatorname{supp}(\tau_t)\}\bigr|.
+\]
+Thus, $d_v$ is the number of retained configurations whose multiset has
+$v$ in its support.  Each of those configurations is activated
+independently with probability $\theta$, and therefore
+\[
+    \mathbb P(v\text{ belongs to an activated support})
+       =1-(1-\theta)^{d_v}.
+\]
+By linearity of expectation,
+\[
+    \mathbb E[Z]
+      =\sum_{v\in Q}\bigl(1-(1-\theta)^{d_v}\bigr)
+      \gg \sum_{v\in Q}\min\{1,\theta d_v\}.
+\]
+
+Set
+\[
+    H:=\{v\in Q:d_v\ge 1/\theta\}.
+\]
+By the definition of $H$, every $v\in H$ contributes $1$ to the last sum,
+so
+\[
+    \mathbb E[Z]\gg |H|.
+\]
+If
+\[
+    |H|\ge\sqrt{\frac{\alpha m}{16}},
+\]
+then it follows that
+\[
+    \mathbb E[Z]\gg_\alpha\sqrt m.
+\]
+
+Suppose instead that
+\[
+    |H|<\sqrt{\frac{\alpha m}{16}}.
+\]
+The number of distinct two-element multisets supported entirely on $H$ is
+\[
+    \binom{|H|+1}{2}<\frac r2
+\]
+when $m_0$ is sufficiently large.  Since the multisets $\tau_t$ are
+pairwise distinct, at least $r/2$ retained configurations have support
+meeting $Q\setminus H$.  Consequently,
+\[
+    \sum_{v\in Q\setminus H}d_v\ge\frac r2.
+\]
+For $v\notin H$, we have $\theta d_v<1$, so
+\[
+    \mathbb E[Z]
+      \gg \theta\sum_{v\in Q\setminus H}d_v
+      \ge \frac{\theta r}{2}
+      \gg \alpha C\sqrt m.
+\]
+Thus, in either case,
+\[
+    \mathbb E[Z]\gg_\alpha\sqrt m.
+\]
+
+We next bound the variance of $Z$.  For a retained configuration indexed by
+$t$, let $Z^{(t,0)}$ denote the value of $Z$ obtained by forcing that
+configuration not to be activated, while leaving all other activation
+choices unchanged.  Put
+\[
+    \Delta_t:=Z-Z^{(t,0)}.
+\]
+Since $\operatorname{supp}(\tau_t)$ has at most two elements,
+\[
+    0\le\Delta_t\le 2.
+\]
+Moreover,
+\[
+    \sum_t\Delta_t\le Z,
+\]
+because an element counted by $Z$ contributes to $\Delta_t$ only when $t$
+is the unique activated configuration whose support contains that element.
+The conditional-variance form of the Efron--Stein inequality therefore gives
+\[
+    \operatorname{Var}(Z)
+      \le \mathbb E\!\left[\sum_t\Delta_t^2\right]
+      \le 2\mathbb E\!\left[\sum_t\Delta_t\right]
+      \le 2\mathbb E[Z].
+\]
+Hence, by Chebyshev's inequality,
+\[
+    \mathbb P\!\left(Z<\frac12\mathbb E[Z]\right)
+      \le \frac{8}{\mathbb E[Z]}
+      =O_\alpha(m^{-1/2}).
+\]
+
+Conditional on the choices in $P$, the choices defining $T\cap Q$ remain
+independent.  If
+\[
+    Z\ge\frac12\mathbb E[Z]\gg_\alpha\sqrt m,
+\]
+the probability that $T\cap Q$ contains none of these $Z$ elements is at
+most
+\[
+    (1-\theta)^Z
+      \le \exp(-\theta Z)
+      \le \exp(-c_\alpha C).
+\]
+If $T\cap Q$ contains one of them, then some activated configuration
+$(j_t,\tau_t)$ satisfies
+\[
+    j_t\in T
+    \qquad\text{and}\qquad
+    T\cap\operatorname{supp}(\tau_t)\ne\varnothing.
+\]
+Thus $T$ hits $\mathcal F$.  The probability that $T$ fails to hit
+$\mathcal F$ is therefore at most
+\[
+    \delta(C,m):=\exp(-c_\alpha C)+O_\alpha(m^{-1/2}).
+\]
+Choose $C$, and then $m_0$, sufficiently large that
+$\delta(C,m)\le 1/64$.
+
+Also,
+\[
+    \mathbb E[|T|]=\theta m=C\sqrt m.
+\]
+By Markov's inequality,
+\[
+    \mathbb P(|T|>4C\sqrt m)\le\frac14.
+\]
+Together with the preceding failure bound, this proves the assertion for
+one family.
+
+Finally, suppose that at most $m$ families are specified on the same set
+$V$.  For each family, fix its own partition $V=P\sqcup Q$ retaining at
+least one eighth of its configurations.  Now construct one common random
+set $T$ by including each element of $V$ independently with probability
+$\theta$.
+
+The preceding analysis applies to each family and shows that its probability
+of being missed by $T$ is at most $1/64$.  No independence between the
+different failure events is required.  If $M$ denotes the number of missed
+families, then linearity of expectation gives
+\[
+    \mathbb E[M]\le\frac m{64}.
+\]
+Markov's inequality gives
+\[
+    \mathbb P\!\left(M>\frac m8\right)\le\frac18.
+\]
+At the same time,
+\[
+    \mathbb P(|T|>4C\sqrt m)\le\frac14.
+\]
+Therefore, with positive probability, both
+\[
+    M\le\frac m8
+    \qquad\text{and}\qquad
+    |T|\le 4C\sqrt m
+\]
+hold.  Taking $D=4C$ completes the proof.
+\end{proof}
+
+The next lemma supplies the combinatorial contraction.  The root, when
+present, is a single additional vertex shared by all rooted pieces.  For
+this reason the correct metric bound is a radius bound from the root, not a
+diameter-four bound on the whole rooted component.
+
+\begin{lemma}[Bounded-radius contraction]
+Let $G$ be a graph with $N$ designated live vertices and, optionally, one
+additional vertex $0$, called the root.  An edge between two live vertices
+is called a live edge, and an edge joining a live vertex to $0$ is called a
+root edge.  Suppose that at most $f$ live vertices are incident with neither
+a live edge nor a root edge.
+
+Then $G$ contains a forest $F$ with the following properties:
+\begin{enumerate}
+    \item every component of $F$ not containing $0$ has diameter at most
+          three;
+    \item every live vertex in the component containing $0$ has distance at
+          most four from $0$, so that this component has diameter at most
+          eight;
+    \item if one live vertex is retained from each component not containing
+          $0$, and no live vertex is retained from the component containing
+          $0$, then at most
+          \[
+              \frac{N+f}{2}
+          \]
+          live vertices are retained.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+Let $L$ be the set of live vertices, and let
+\[
+    G_{\mathrm{live}}:=G[L]
+\]
+be the subgraph induced by $L$.  Thus $G_{\mathrm{live}}$ contains all live
+vertices and all edges joining two live vertices, but it contains neither
+the root nor any root edge.
+
+Take a maximal matching $M$ in $G_{\mathrm{live}}$.  We construct a spanning
+forest $F\subseteq G$, beginning with all the edges of $M$.  Every unmatched
+vertex $u$ that has a neighbor in $G_{\mathrm{live}}$ has a matched neighbor.
+Indeed, if $u$ had an unmatched neighbor $v$, then the edge $\{u,v\}$ could
+be added to $M$, contradicting maximality.
+
+For each such $u$, choose a matched neighbor $v$.  There is a unique matching
+edge $e\in M$ containing $v$.  Assign $u$ to $e$, and add the edge $\{u,v\}$
+to $F$.  For each matching edge $e=\{a,b\}$, the edge $e$, together with the
+vertices assigned to it and their chosen edges, forms a double-star.  These
+double-stars are pairwise disjoint and have diameter at most three.
+
+If a double-star contains a live vertex joined to the root $0$, add exactly
+one such root edge to $F$.  Because only one root edge is added from each
+double-star, this creates no cycle.  All double-stars attached to $0$ become
+part of the same rooted component.  If $x$ is the attachment point of one
+such double-star, every vertex in that double-star is at distance at most
+three from $x$.  Therefore every live vertex in the rooted component is at
+distance at most four from $0$.  Thus the rooted component has radius at
+most four from $0$, and hence diameter at most eight.
+
+Now consider an unmatched vertex that is isolated in
+$G_{\mathrm{live}}$.  If it has a root edge, add one such edge to $F$.
+Otherwise, leave it as a singleton component.  Let $f_0$ be the number of
+these exceptional singleton vertices.  Each is incident with neither a live
+edge nor a root edge, so the hypothesis gives
+\[
+    f_0\le f.
+\]
+
+Every component of $F$ not containing $0$ is either an unrooted double-star,
+of diameter at most three, or an exceptional singleton, of diameter zero.
+Each unrooted double-star contains at least two live vertices and contributes
+one retained vertex.  The component containing $0$ contributes none, while
+the $f_0$ exceptional singleton components contribute $f_0$.  Hence the
+total number of retained live vertices is at most
+\[
+    \frac{N-f_0}{2}+f_0
+      =\frac{N+f_0}{2}
+      \le\frac{N+f}{2}.
+\]
+This proves all three assertions.
+\end{proof}
+
+\section{Integral contraction}
+
+We now construct many primitive lattice pivots.  All norms below are
+$\ell_1$-norms.  Put
+\[
+    L:=\left\lfloor\frac{\log_2 p}{3}\right\rfloor.
+\]
+We may assume that $p$ is large enough that $L\ge 2$.
+
+\begin{proposition}[Compression]
+There are an integer $K$ and a subgroup $P\subseteq\Lambda$, primitive in
+$\mathbb Z^n$, such that
+\[
+    \operatorname{rank}P=n-K,
+    \qquad
+    K=O\!\left(\sqrt n+\frac{n}{\log p}\right),
+\]
+and $\mathbb Z^n/P$ is free of rank $K$.  Moreover, the quotient has a basis
+$c_1,\ldots,c_K$ in which the image of every original coordinate $e_a$ has
+$\ell_1$-norm at most $n^{O(1)}$.
+\end{proposition}
+
+\begin{proof}
+We construct an increasing sequence of primitive subgroups
+\[
+    P_0\subseteq P_1\subseteq\cdots\subseteq\Lambda.
+\]
+Writing $Q_r:=\mathbb Z^n/P_r$, enlarging $P_r$ imposes additional relations
+and therefore eliminates basis directions from the quotient:
+\[
+    Q_{r+1}\cong Q_r/(P_{r+1}/P_r).
+\]
+Alongside this algebraic operation, we keep track of a convenient basis of
+each $Q_r$, dividing its elements into core coordinates and live
+representatives.  Promoting a live representative to the core does not
+change the quotient; it only declares that basis element permanent.  The
+quotient changes only when new relations are added to $P_r$.
+
+The construction keeps some quotient-basis elements permanently; we call
+these the \emph{core coordinates}.  The remaining original indices are
+grouped into pairwise disjoint \emph{live blocks}.  A live block is a set
+$B\subseteq[n]$ equipped with a quotient-basis element $x_B$ such that every
+$a\in B$ has image
+\[
+    \overline e_a=x_B+z_a,
+\]
+where $z_a$ is supported on the core coordinates.  The representative $x_B$
+is still eligible to be eliminated through a later forest contraction, and
+the weight of the block is $|B|$.  When $x_B$ is permanently retained as a
+core coordinate, we call $B$ nonlive.
+
+At the beginning of round $r$, let $k_r$ be the number of core coordinates
+and let $m_r$ be the number of live blocks.  We maintain the following
+invariant: the quotient $Q_r$ is free on a basis consisting of the $k_r$
+core coordinates and one live
+representative $x_B$ for each of $m_r$ pairwise disjoint live blocks
+$B\subseteq[n]$.
+
+For every original index $a\in[n]$, its image $\overline e_a$ in $Q_r$ has
+the form
+\[
+    \overline e_a=
+    \begin{cases}
+        x_B+z_a, & a\in B\text{ for a live block }B,\\
+        z_a,     & a\text{ belongs to a nonlive block},
+    \end{cases}
+    \qquad
+    \|z_a\|_1\le M_r,
+\]
+where every $z_a$ is supported on the core coordinates.  Initially
+\[
+    P_0=\{0\},\qquad k_0=0,\qquad m_0=n,\qquad M_0=1,
+\]
+and the live blocks are the singletons.  Every live block has weight
+$|B|<L$.  Whenever a block reaches weight at least $L$, we promote its
+representative to the core and declare the block nonlive.
+
+Fix one round and suppress the subscript $r$, writing $k,m,M$ for the current
+parameters.  Label the live blocks $B_1,\ldots,B_m$ and write $x_i$ for the
+representative of $B_i$.
+
+For distinct live blocks $B_i,B_j$, we have
+\[
+    |B_i|+|B_j|<2L<\log_2p+2.
+\]
+By Lemma~2.1, the rectangle formed by the index pairs with one index in
+$B_i$ and the other in $B_j$ cannot be $\mu$-invariant.  For every ordered
+pair $i\ne j$, choose a departing index pair $t_{ij}$ in this rectangle such
+that $\mu(t_{ij})$ lies outside it.  Project all the corresponding collision
+rows into the quotient basis fixed at the beginning of the round.
+
+For a multiset $\nu$ of live labels, write
+\[
+    x(\nu):=\sum_{a\in\nu}x_a,
+\]
+with multiplicity.  The projected departing row has the form
+\begin{equation}
+    r_{ij}=x_i+x_j-x(\nu_{ij})+g_{ij},
+    \qquad
+    |\nu_{ij}|\le2,
+    \qquad
+    \nu_{ij}\ne\{i,j\},
+    \qquad
+    \|g_{ij}\|_1\le4M,
+    \tag{4.1}
+    \label{eq:departing-row}
+\end{equation}
+where $g_{ij}$ is supported on the core.  Indeed, a collision row is the
+signed sum of four original coordinate images.  The inequality
+$\nu_{ij}\ne\{i,j\}$ follows from the fact that $t_{ij}$ departs from the
+rectangle.
+
+Define the \emph{unit graph} for the round to have vertex set
+$\{0,1,\ldots,m\}$, where the vertices $1,\ldots,m$ label the live
+representatives and $0$ is an auxiliary root representing the core.  Call a
+projected row a \emph{unit row} if, after multiplying the row by $-1$ if
+necessary, its noncore part is either $x_a$ or $x_a-x_b$.  In the first case
+attach the row to the root edge $\{0,a\}$; in the second case attach it to
+the edge $\{a,b\}$.  The graph records only the noncore part of each row;
+the core-supported term is retained as part of the row attached to the
+edge.  If several rows produce the same edge, retain any one of them.  Begin
+the unit graph with the edges coming from those projected departing rows
+$r_{ij}$ that are already unit rows.
+
+Fix an anchor $i$ and vary the label $j\ne i$.  Classify the row in
+\eqref{eq:departing-row} as follows.
+\begin{itemize}
+    \item If $\nu_{ij}$ contains $j$, cancellation leaves a unit row incident
+          with $i$.  Call $i$ \emph{direct} if this happens for at least one
+          label $j$.
+    \item If $\nu_{ij}$ contains $i$, cancellation leaves a unit row incident
+          with $j$, so $j$ is covered by the unit graph.
+    \item If $\nu_{ij}$ contains neither $i$ nor $j$ and
+          $|\nu_{ij}|\le1$, call $j$ \emph{easy for $i$}.
+    \item In the remaining case, $\nu_{ij}$ is a two-element multiset
+          disjoint from $\{i,j\}$.  Call $j$ \emph{proper for $i$}, with
+          type $\nu_{ij}$.
+\end{itemize}
+
+For a fixed anchor $i$, group its proper labels by type.  Within each group,
+choose one label $j_0$ and subtract its row from the other rows in that
+group.  If $j$ has the same type as $j_0$, this gives
+\[
+    r_{ij}-r_{ij_0}
+      =x_j-x_{j_0}+(g_{ij}-g_{ij_0}),
+\]
+which is a unit row whose core part has norm at most $8M$.  Add its edge to
+the unit graph.  For each proper type, the resulting edges form a star
+centered at $j_0$ and cover all but at most one proper label of that type.
+
+Let $a_i$ be the number of easy labels for anchor $i$, and let $s_i$ be the
+number of its distinct proper types.  Suppose that some nondirect anchor $i$
+satisfies
+\[
+    a_i<\frac m8,
+    \qquad
+    s_i<\frac m8.
+\]
+The immediate unit rows and the proper-type star rows then cover at least
+\[
+    m-1-a_i-s_i>\frac{3m}{4}-1
+\]
+live labels.  Thus the unit graph has at most $m/4+1$ isolated live
+vertices.  Lemma~3.2 contracts this graph to at most
+\[
+    \frac{m+(m/4+1)}{2}=\frac{5m}{8}+\frac12
+\]
+live blocks.
+
+It remains to treat the alternative in which no nondirect anchor has both
+$a_i<m/8$ and $s_i<m/8$.  Partition the nondirect anchors into two classes:
+declare $i$ to be an easy anchor if $a_i\ge m/8$, and otherwise declare it
+to be a proper anchor, in which case necessarily $s_i\ge m/8$.
+
+For each easy anchor $i$, let $E_i$ be its set of easy labels, so
+$|E_i|\ge m/8$.  Include each live label independently in a random set with
+probability $\theta=C/\sqrt m$.  For a fixed easy anchor,
+\[
+    \mathbb P(T\cap E_i=\varnothing)
+      =(1-\theta)^{|E_i|}
+      \le \exp(-C\sqrt m/8).
+\]
+A union bound over at most $m$ easy anchors shows that, for all sufficiently
+large $m$, the probability of missing any $E_i$ is less than $1/4$.  Since
+the expected sample size is $C\sqrt m$, Markov's inequality gives
+\[
+    \mathbb P(|T|>2C\sqrt m)\le\frac12.
+\]
+Hence there is a deterministic set $T_{\mathrm{easy}}$ of size at most
+$2C\sqrt m$ that meets every easy-label set $E_i$.
+
+For each proper anchor $i$, choose one proper label from each of at least
+$m/8$ distinct proper types.  The resulting pairs
+\[
+    (j,\nu_{ij})
+\]
+form a family of configurations on the set of live labels: the chosen labels
+are distinct, the types are distinct, and $j$ does not belong to the support
+of $\nu_{ij}$.  Applying Lemma~3.1 simultaneously to these at most $m$
+families, with $\alpha=1/8$, gives a set $T_{\mathrm{prop}}$ of size
+$O(\sqrt m)$ that hits all but at most $m/8$ proper-anchor families.
+
+Set
+\[
+    T:=T_{\mathrm{easy}}\cup T_{\mathrm{prop}}.
+\]
+Then $|T|=O(\sqrt m)$, and this single set has both required properties.
+Promote all representatives indexed by $T$ to core coordinates.  If an easy
+anchor $i$ does not itself lie in $T$, choose an easy label $j\in E_i\cap T$;
+then \eqref{eq:departing-row} becomes a unit row incident with $i$.  If a proper anchor
+$i\notin T$ belongs to a family hit by $T_{\mathrm{prop}}$, then some chosen
+label $j$ and at least one element of the support of $\nu_{ij}$ lie in $T$;
+again \eqref{eq:departing-row} becomes a unit row incident with $i$.
+
+Direct rows and all pre-existing unit rows survive the promotion: if one
+endpoint of a unit edge enters the core, that edge simply becomes a root
+edge.  Consequently, among the remaining live labels, at most $m/8$ are
+isolated.  Lemma~3.2 therefore leaves at most
+\[
+    \frac{m+m/8}{2}=\frac{9m}{16}
+\]
+live blocks.
+
+In either case, once $m$ is above a fixed threshold $m_*$, the number of live
+blocks falls by a factor at most $2/3$.  Choose the forest rows supplied by
+Lemma~3.2.  Eliminate every live representative in the rooted component and
+all but one representative in each unrooted component.  Order the selected
+rows from the leaves toward the retained representative or toward the root.
+Each row then has coefficient $1$ on a fresh pivot coordinate.  The pivot
+matrix is unit triangular, so the selected rows extend $P_r$ primitively.
+The retained live block is the union of the physical blocks in its forest
+component.
+
+We next record coefficient growth.  Before promotion, a raw unit row has
+core norm at most $4M$, and a proper-type difference has core norm at most
+$8M$.  Reclassifying sampled representatives as core coordinates introduces
+at most four further unit coefficients, so every selected unit row has core
+norm at most $12M$.  Promotion changes the core-norm bound on each original
+coordinate from $M$ to at most $M+1\le2M$.
+
+The corrected metric conclusion of Lemma~3.2 gives every eliminated live
+representative a substitution path of length at most four, either to the
+retained representative of its unrooted component or to the root.  Substituting
+along such a path changes the bound on an original coordinate to at most
+\[
+    2M+4\cdot12M=50M.
+\]
+Promoting a newly heavy representative costs at most one further unit
+coefficient.  Thus the next round may take
+\[
+    M_{r+1}\le60M_r.
+\]
+There are only $O(\log n)$ nonterminal rounds, and hence throughout the
+construction
+\[
+    M_r\le60^{O(\log n)}=n^{O(1)}.
+\]
+
+It remains to count the final core coordinates.  The common samples
+contribute
+\[
+    O\!\left(\sum_{\ell\ge0}\sqrt{n(2/3)^\ell}\right)
+      =O(\sqrt n)
+\]
+coordinates.  Every block promoted for being heavy has weight at least $L$,
+and these physical blocks are pairwise disjoint, so heavy promotions
+contribute at most
+\[
+    \frac nL=O\!\left(\frac n{\log p}\right)
+\]
+coordinates.  Once fewer than $m_*$ live blocks remain, promote all their
+representatives; this contributes $O(1)$ further coordinates.
+
+Let $R$ be the terminal stage and define
+\[
+    P:=P_R,
+    \qquad
+    K:=k_R.
+\]
+The final quotient is free on its $K$ core coordinates, and
+\[
+    K=O\!\left(\sqrt n+\frac n{\log p}\right).
+\]
+Since its rank is $K$, exactly $n-K$ primitive pivots were selected, so
+$\operatorname{rank}P=n-K$.  The coefficient-growth estimate shows that the
+image of every original coordinate has $\ell_1$-norm at most $n^{O(1)}$ in
+the final core basis.  This completes the proof.
+\end{proof}
+
+\section{The final determinant}
+
+\begin{proof}[Proof of Theorem 1.2]
+Let $P\subseteq\Lambda$ be the rank-$(n-K)$ primitive subgroup from
+Proposition~4.1.  Since $\Lambda$ has rank $n-1$ by Lemma~1.3, choose
+$K-1$ original collision rows whose images modulo $P$ are rationally
+independent.  In a unimodular coordinate system adapted to the primitive
+pivots, eliminate their pivot-coordinate entries using the selected rows.
+The remaining $(K-1)$-by-$K$ matrix consists of their images in the core.
+
+Every original coordinate has core norm at most $M=n^{O(1)}$, and an
+original collision row is the signed sum of four such images.  Hence every
+row of this core matrix has norm at most $4M$.  Select a nonzero
+$(K-1)$-minor $D$.  It is a maximal minor of the full $(n-1)$-row lattice
+matrix after unimodular row and column operations.  Lemma~1.3 therefore
+gives $p\mid D$.  Hadamard's inequality gives
+\[
+    p\le|D|\le(4M)^{K-1}=\exp\bigl(O(K\log n)\bigr).
+\]
+Writing $X=\log p$ and using the bound for $K$, we obtain
+\[
+    X\le C\left(\sqrt n+\frac nX\right)\log n
+\]
+for an absolute constant $C$.  If $n\ge X^2$, the asserted lower bound is
+immediate.  Otherwise
+\[
+    \frac nX\le\sqrt n
+    \qquad\text{and}\qquad
+    \log n\le2\log X,
+\]
+whence
+\[
+    X\ll\sqrt n\log X.
+\]
+Rearranging yields
+\[
+    n\gg
+    \left(\frac{\log p}{\log\log p}\right)^2,
+\]
+as required.
+\end{proof}
+
+\begin{corollary}
+As $p\to\infty$,
+\[
+    m(p)=(\log p)^{2+o(1)}.
+\]
+\end{corollary}
+
+\begin{proof}
+Theorem~1.2 gives
+\[
+    m(p)\ge(\log p)^2(\log\log p)^{-2}
+          =(\log p)^{2-o(1)}.
+\]
+Bedert's construction gives $m(p)\ll(\log p)^2$~\cite{bedert}.
+\end{proof}
+
+\begin{thebibliography}{9}
+
+\bibitem{bedert}
+B.~Bedert,
+\emph{On unique sums in Abelian groups},
+Combinatorica \textbf{44} (2024), 269--298;
+\url{https://doi.org/10.1007/s00493-023-00069-w}.
+
+\bibitem{green}
+B.~Green,
+\emph{100 open problems}, Problem~27;
+\url{https://people.maths.ox.ac.uk/greenbj/papers/open-problems.pdf}.
+
+\end{thebibliography}
+
+\end{document}
+
