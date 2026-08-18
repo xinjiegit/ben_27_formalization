@@ -24,7 +24,7 @@ open MinimalNUS
 has the images of the standard coordinate vectors as a basis.  This is also the
 terminal construction whenever the requested corank estimate already allows `K = n`. -/
 theorem compression_bot_case (C p n : ℕ) (S : MinimalNUS p n) (P : S.Pairing)
-    (hC : 0 < C)
+    (_hC : 0 < C)
     (hbound : (n : ℝ) ≤ C * (Real.sqrt n + n / Real.log p)) :
     ∃ (K : ℕ) (Q : Submodule ℤ (Fin n → ℤ)),
       Q ≤ S.colLat P ∧
@@ -53,7 +53,7 @@ theorem compression_bot_case (C p n : ℕ) (S : MinimalNUS p n) (P : S.Pairing)
       rw [Finset.sum_eq_single i]
       · simp
       · intro j _ hji
-        simp [Pi.single_apply, hji]
+        simp [hji]
       · simp
     rw [hsum]
     have hn : (1 : ℤ) ≤ n := by exact_mod_cast S.two_le.trans' (by omega)
@@ -99,7 +99,7 @@ theorem unitRelation_normalize_at_one {V : Type*} [DecidableEq V]
   · have hai : a = i := by
       by_contra h
       have hv := congrFun ha i
-      simp [Pi.single_apply, h] at hv hi
+      simp [h] at hv hi
       omega
     subst a
     exact Or.inl ha
@@ -109,26 +109,26 @@ theorem unitRelation_normalize_at_one {V : Type*} [DecidableEq V]
         intro hbi
         subst b
         have hv := congrFun ha i
-        simp [Pi.single_apply, hia] at hv hi
+        simp [hia] at hv hi
         omega
       have hv := congrFun ha i
-      simp [Pi.single_apply, hia, hbi] at hv hi
+      simp [hia, hbi] at hv hi
       omega
     subst a
     exact Or.inr ⟨b, hab.symm, ha⟩
   · exfalso
     have hv := congrFun ha i
-    by_cases hai : a = i <;> simp [Pi.single_apply, hai] at hv hi <;> omega
+    by_cases hai : a = i <;> simp [hai] at hv hi <;> omega
   · have hbi : b = i := by
       by_contra hbi
       have hai : a ≠ i := by
         intro hai
         subst a
         have hv := congrFun ha i
-        simp [Pi.single_apply, hbi] at hv hi
+        simp [hbi] at hv hi
         omega
       have hv := congrFun ha i
-      simp [Pi.single_apply, hai, hbi] at hv hi
+      simp [hai, hbi] at hv hi
       omega
     subst b
     right
@@ -223,7 +223,7 @@ theorem departingLive_unit_of_mem_right {V : Type*} [DecidableEq V]
         ring
     · by_cases hai : a = i
       · subst a
-        exact absurd (by simpa) hne
+        exact absurd (by simp) hne
       · right; left
         refine ⟨i, a, Ne.symm hai, ?_⟩
         ext v
@@ -268,7 +268,7 @@ theorem departingLive_anchor_of_mem_right {V : Type*} [DecidableEq V]
         rcases hj with hji | hjb
         · exact hij hji.symm
         · apply hne
-          simpa [hjb]
+          simp [hjb]
       · intro hib
         subst b
         rcases hj with hja | hji
@@ -277,7 +277,7 @@ theorem departingLive_anchor_of_mem_right {V : Type*} [DecidableEq V]
         · exact hij hji.symm
     simp only [departingLive, Pi.add_apply, Pi.sub_apply]
     rw [count_pair_apply]
-    simp [Pi.single_apply, hij, hi.1, hi.2]
+    simp [hij, hi.1, hi.2]
 
 /-- Symmetric immediate cancellation leaves coefficient one at the label. -/
 theorem departingLive_label_of_mem_left {V : Type*} [DecidableEq V]
@@ -292,7 +292,7 @@ theorem departingLive_label_of_mem_left {V : Type*} [DecidableEq V]
 theorem departingLive_anchor_of_not_mem {V : Type*} [DecidableEq V]
     (i j : V) (ν : Multiset V) (hij : i ≠ j) (hi : i ∉ ν) :
     departingLive i j ν i = 1 := by
-  simp [departingLive, Pi.single_apply, hij, Multiset.count_eq_zero.mpr hi]
+  simp [departingLive, hij, Multiset.count_eq_zero.mpr hi]
 
 /-- Subtracting two proper rows of the same type cancels both the anchor and the type,
 leaving the unit difference between their labels. -/
@@ -389,7 +389,7 @@ theorem proper_after_promote_unit {V : Type*} [Fintype V] [DecidableEq V]
       rw [show (({a, b} : Multiset V).count v.1 : ℤ) =
         (Pi.single a (1 : ℤ) : V → ℤ) v.1 +
           (Pi.single b (1 : ℤ) : V → ℤ) v.1 by exact count_pair_apply a b v.1]
-      simp [departingLive, Pi.single_apply, hvj, hva, hvb, Subtype.ext_iff]
+      simp [Pi.single_apply, hvj, hva, hvb, Subtype.ext_iff]
     · right; left
       refine ⟨⟨i, hiT⟩, ⟨b, hbT⟩, ?_, ?_⟩
       · exact fun e => hib (congrArg Subtype.val e)
@@ -400,7 +400,7 @@ theorem proper_after_promote_unit {V : Type*} [Fintype V] [DecidableEq V]
         rw [show (({a, b} : Multiset V).count v.1 : ℤ) =
           (Pi.single a (1 : ℤ) : V → ℤ) v.1 +
             (Pi.single b (1 : ℤ) : V → ℤ) v.1 by exact count_pair_apply a b v.1]
-        simp [departingLive, Pi.single_apply, hvj, hva, Subtype.ext_iff]
+        simp [Pi.single_apply, hvj, hva, Subtype.ext_iff]
   · have hbT : b ∈ T := habT.resolve_left haT
     right; left
     refine ⟨⟨i, hiT⟩, ⟨a, haT⟩, ?_, ?_⟩
@@ -412,7 +412,7 @@ theorem proper_after_promote_unit {V : Type*} [Fintype V] [DecidableEq V]
       rw [show (({a, b} : Multiset V).count v.1 : ℤ) =
         (Pi.single a (1 : ℤ) : V → ℤ) v.1 +
           (Pi.single b (1 : ℤ) : V → ℤ) v.1 by exact count_pair_apply a b v.1]
-      simp [departingLive, Pi.single_apply, hvj, hvb, Subtype.ext_iff]
+      simp [Pi.single_apply, hvj, hvb, Subtype.ext_iff]
 
 /-- The exhaustive direct/easy/proper classification following (4.1). -/
 theorem departing_classification {V : Type*} [DecidableEq V]
@@ -452,7 +452,7 @@ theorem exists_configuration_of_proper {V : Type*} [DecidableEq V]
     subst b
     exact h.2.1 (by simp)
   refine ⟨a, b, ⟨j, s(a, b), ?_⟩, rfl, rfl, rfl⟩
-  · simpa [Sym2.mem_iff, hja, hjb]
+  · simp [Sym2.mem_iff, hja, hjb]
 
 /-! ### Live blocks and projection of collision rows -/
 
@@ -516,7 +516,7 @@ theorem liveLabels_source_pair {n : ℕ} {V : Type*} [DecidableEq V]
   simp [Multiset.insert_eq_cons]
 
 theorem mem_rectangle_of_liveLabels_eq_pair {n : ℕ} {V : Type*} [DecidableEq V]
-    (B : LiveBlocks n V) {i j : V} (hij : i ≠ j) {t : Sym2 (Fin n)}
+    (B : LiveBlocks n V) {i j : V} (_hij : i ≠ j) {t : Sym2 (Fin n)}
     (ht : liveLabels B t = {i, j}) :
     t ∈ MinimalNUS.rectangle (B.block i) (B.block j) := by
   induction t using Sym2.inductionOn with
@@ -652,7 +652,7 @@ theorem live_coord_uvec (st : CompressionState S P C V) (t : Sym2 (Fin n)) (v : 
         rcases hb : st.blocks.owner b with _ | y
       all_goals
         rw [st.live_coord a v, st.live_coord b v]
-        simp [ha, hb, Multiset.count_add, Multiset.count_cons,
+        simp [ha, hb, Multiset.count_cons,
           Multiset.count_singleton, eq_comm, add_comm]
 
 /-- The live part of an incidence vector has `ℓ1`-norm at most two, even when
@@ -701,7 +701,7 @@ theorem projectedRow_live_norm_le (st : CompressionState S P C V)
     _ = 4 := by norm_num
 
 theorem projectedRow_live (st : CompressionState S P C V) {i j : V}
-    (hij : i ≠ j) {t : Sym2 (Fin n)}
+    (_hij : i ≠ j) {t : Sym2 (Fin n)}
     (ht : t ∈ MinimalNUS.rectangle (st.blocks.block i) (st.blocks.block j)) :
     (fun v => st.projectedRow t (Sum.inr v)) =
       departingLive i j (liveLabels st.blocks (P.μ t)) := by
@@ -760,7 +760,7 @@ noncomputable def initialCompressionState {p n : ℕ} (S : MinimalNUS p n)
     have he : e.symm (Submodule.Quotient.mk (Pi.single a 1)) = Pi.single a 1 := by
       rw [e.symm_apply_eq]
       rfl
-    simp only [b, Module.Basis.repr_reindex_apply, Equiv.emptySum_symm_apply,
+    simp only [b, Module.Basis.repr_reindex_apply,
       b₀, Module.Basis.map_repr, LinearEquiv.trans_apply, Pi.basisFun_repr, he,
       initialLiveBlocks]
     simp [Pi.single_apply, eq_comm]
@@ -768,7 +768,7 @@ noncomputable def initialCompressionState {p n : ℕ} (S : MinimalNUS p n)
 theorem initialCompressionState_coreBound {p n : ℕ} (S : MinimalNUS p n)
     (P : S.Pairing) : (initialCompressionState S P).CoreBound 0 := by
   intro a
-  simp [CompressionState.CoreBound]
+  simp
 
 /-! ### Reclassifying live representatives as core coordinates -/
 
@@ -1044,23 +1044,23 @@ theorem CompressionState.promote_coreBound {p n : ℕ} {S : MinimalNUS p n}
   have hnew : (∑ v : {v : V // v ∈ T},
       |if st.blocks.owner a = some v.1 then (1 : ℤ) else 0|) ≤ 1 := by
     rcases h : st.blocks.owner a with _ | w
-    · simp [h]
+    · simp
     · by_cases hw : w ∈ T
       · let wT : {v : V // v ∈ T} := ⟨w, hw⟩
         rw [Finset.sum_eq_single wT]
-        · simp [h, wT]
+        · simp [wT]
         · intro v hv hvw
           have hvw' : v.1 ≠ w := by
             intro he
             apply hvw
             exact Subtype.ext he
-          simp [h, hvw'.symm]
+          simp [hvw'.symm]
         · simp
       · have hne : ∀ v : {v : V // v ∈ T}, w ≠ v.1 := by
           intro v he
           subst w
           exact (hw v.2).elim
-        simp [h, hne]
+        simp [hne]
   exact add_le_add (hM a) hnew
 
 /-! ### A single integral unit pivot -/
@@ -1078,7 +1078,7 @@ def unitElim {C V : Type*} [DecidableEq V] (v : V) (y : Sum C V → ℤ) :
     rcases i with c | u <;> simp <;> ring
   map_smul' k z := by
     funext i
-    rcases i with c | u <;> simp [smul_eq_mul] <;> ring
+    rcases i with c | u <;> simp <;> ring
 
 @[simp] theorem unitElim_apply_left {C V : Type*} [DecidableEq V]
     (v : V) (y z : Sum C V → ℤ) (c : C) :
@@ -1124,7 +1124,7 @@ theorem ker_unitElim {C V : Type*} [DecidableEq V] (v : V) (y : Sum C V → ℤ)
       linarith
     · by_cases huv : u = v
       · subst u
-        simp [hy, Pi.smul_apply, smul_eq_mul]
+        simp [hy, Pi.smul_apply]
       · have h := congrFun hz (Sum.inr (⟨u, huv⟩ : {u : V // u ≠ v}))
         simp only [unitElim_apply_right, Pi.zero_apply] at h
         change z (Sum.inr v) * y (Sum.inr u) = z (Sum.inr u)
@@ -1134,7 +1134,7 @@ theorem ker_unitElim {C V : Type*} [DecidableEq V] (v : V) (y : Sum C V → ℤ)
     rw [LinearMap.mem_ker]
     funext i
     rcases i with c | u <;>
-      simp [unitElim, hy, Pi.smul_apply, smul_eq_mul] <;> ring
+      simp [unitElim, hy]
 
 /-- Kernels of maps to a free integral coordinate module are primitive. -/
 theorem ker_primitive {M ι : Type*} [AddCommGroup M] [Module ℤ M]
@@ -1195,7 +1195,7 @@ def LiveBlocks.contract {n : ℕ} {V : Type*} [Fintype V] [DecidableEq V]
     by_cases hp : parent = some u
     · simp only [hp, if_pos, Finset.mem_union]
       rw [B.mem_block_iff, B.mem_block_iff]
-      simp [hp, and_comm]
+      simp [and_comm]
     · simp only [if_neg hp]
       rw [B.mem_block_iff]
       constructor
@@ -1282,11 +1282,10 @@ noncomputable def CompressionState.pivot {p n : ℕ} {S : MinimalNUS p n}
     have h1 : x - k • r ∈ S.colLat P := st.le_colLat hdiff
     have h2 : k • r ∈ S.colLat P := (S.colLat P).smul_mem k hr
     have hadd := (S.colLat P).add_mem h1 h2
-    convert hadd using 1 <;> module
+    (convert hadd using 1; module)
   · intro a u
-    change b.repr (Submodule.Quotient.mk (Pi.single a 1)) (Sum.inr u) = _
     simp only [b, Module.Basis.map_repr, LinearEquiv.trans_apply,
-      Pi.basisFun_repr, e, LinearMap.quotKerEquivOfSurjective_apply_mk]
+      Pi.basisFun_repr, e]
     change unitElim v y
       (st.basis.equivFun (Submodule.Quotient.mk (Pi.single a 1))) (Sum.inr u) = _
     rw [unitElim_apply_right]
@@ -1316,8 +1315,7 @@ theorem CompressionState.pivot_core_coord {p n : ℕ} {S : MinimalNUS p n}
       st.basis.repr (Submodule.Quotient.mk (Pi.single a 1)) (Sum.inl c) -
         (if st.blocks.owner a = some v then 1 else 0) *
           st.basis.repr (Submodule.Quotient.mk r) (Sum.inl c) := by
-  simp only [CompressionState.pivot, Module.Basis.map_repr, LinearEquiv.trans_apply,
-    Pi.basisFun_repr]
+  simp only [CompressionState.pivot, Module.Basis.map_repr]
   change unitElim v (st.basis.equivFun (Submodule.Quotient.mk r))
       (st.basis.equivFun (Submodule.Quotient.mk (Pi.single a 1))) (Sum.inl c) = _
   rw [unitElim_apply_left]
@@ -1342,8 +1340,7 @@ theorem CompressionState.pivot_core_coord_row {p n : ℕ} {S : MinimalNUS p n}
       st.basis.repr (Submodule.Quotient.mk q) (Sum.inl c) -
         st.basis.repr (Submodule.Quotient.mk q) (Sum.inr v) *
           st.basis.repr (Submodule.Quotient.mk r) (Sum.inl c) := by
-  simp only [CompressionState.pivot, Module.Basis.map_repr, LinearEquiv.trans_apply,
-    Pi.basisFun_repr]
+  simp only [CompressionState.pivot, Module.Basis.map_repr]
   change unitElim v (st.basis.equivFun (Submodule.Quotient.mk r))
       (st.basis.equivFun (Submodule.Quotient.mk q)) (Sum.inl c) = _
   rw [unitElim_apply_left]
@@ -1364,8 +1361,7 @@ theorem CompressionState.pivot_live_coord_row {p n : ℕ} {S : MinimalNUS p n}
       st.basis.repr (Submodule.Quotient.mk q) (Sum.inr u.1) -
         st.basis.repr (Submodule.Quotient.mk q) (Sum.inr v) *
           st.basis.repr (Submodule.Quotient.mk r) (Sum.inr u.1) := by
-  simp only [CompressionState.pivot, Module.Basis.map_repr, LinearEquiv.trans_apply,
-    Pi.basisFun_repr]
+  simp only [CompressionState.pivot, Module.Basis.map_repr]
   change unitElim v (st.basis.equivFun (Submodule.Quotient.mk r))
       (st.basis.equivFun (Submodule.Quotient.mk q)) (Sum.inr u) = _
   rw [unitElim_apply_right]
@@ -1466,17 +1462,17 @@ theorem CompressionState.exists_oriented_unit_pivot {p n : ℕ}
     refine ⟨r, hr, a, some b', ?_, ?_, rfl⟩
     · have h := congrFun habr a
       change st.basis.repr (Submodule.Quotient.mk r) (Sum.inr a) = 1
-      simp [Pi.single_apply, hab] at h ⊢
+      simp [hab] at h ⊢
       exact h
     · intro u
       have h := congrFun habr u.1
       change st.basis.repr (Submodule.Quotient.mk r) (Sum.inr u.1) = _
       by_cases hub : u.1 = b
       · have hub' : b' = u := Subtype.ext hub.symm
-        simp [hub', Pi.single_apply, u.2, hub, Ne.symm hab] at h ⊢
+        simp [hub', hub, Ne.symm hab] at h ⊢
         exact h
       · have hbu : b' ≠ u := fun h' => hub (congrArg Subtype.val h').symm
-        simp [hbu, Pi.single_apply, u.2, hub] at h ⊢
+        simp [hbu, u.2, hub] at h ⊢
         exact h
   · refine ⟨-r, (S.colLat P).neg_mem hr, a, none, ?_, ?_, ?_⟩
     · have h := congrFun ha a
@@ -1498,7 +1494,7 @@ theorem CompressionState.exists_oriented_unit_pivot {p n : ℕ}
       change st.basis.repr (Submodule.Quotient.mk (-r)) (Sum.inr a) = 1
       rw [Submodule.Quotient.mk_neg, map_neg, Finsupp.neg_apply]
       have hn := congrArg Neg.neg h
-      simp [Pi.single_apply, hab] at hn ⊢
+      simp [hab] at hn ⊢
       exact hn
     · intro u
       have h := congrFun habr u.1
@@ -1507,10 +1503,10 @@ theorem CompressionState.exists_oriented_unit_pivot {p n : ℕ}
       have hn := congrArg Neg.neg h
       by_cases hub : u.1 = b
       · have hub' : b' = u := Subtype.ext hub.symm
-        simp [hub', Pi.single_apply, u.2, hub, Ne.symm hab] at hn ⊢
+        simp [hub', hub, Ne.symm hab] at hn ⊢
         exact hn
       · have hbu : b' ≠ u := fun h' => hub (congrArg Subtype.val h').symm
-        simp [hbu, Pi.single_apply, u.2, hub] at hn ⊢
+        simp [hbu, u.2, hub] at hn ⊢
         exact hn
     · apply Finset.sum_congr rfl
       intro c hc
@@ -1538,7 +1534,7 @@ theorem exists_easy_configuration_family {V : Type*} [Fintype V] [DecidableEq V]
       τ := s(i, (π j).1)
       not_mem := by
         rw [Sym2.mem_iff]
-        push_neg
+        push Not
         constructor
         · intro hji
           apply hi
@@ -1569,7 +1565,8 @@ theorem exists_easy_configuration_family {V : Type*} [Fintype V] [DecidableEq V]
     · exact absurd h.1 (by
         intro hik
         apply hi
-        simpa [hik] using (π k).2)
+        rw [hik]
+        exact (π k).2)
   · intro T c hc hhit
     obtain ⟨j, -, rfl⟩ := Finset.mem_map.mp hc
     exact ⟨j.1, hhit.1, j.2⟩
@@ -1693,7 +1690,7 @@ theorem light_blocks_power_lt {n p : ℕ} {V : Type*}
   exact hpow.trans_le (Nat.pow_log_le_self 2 (by omega))
 
 /-- The clean-rectangle lemma supplies all departing rows used in one round. -/
-noncomputable def exists_departingSystem {p n : ℕ} [Fact p.Prime]
+theorem exists_departingSystem {p n : ℕ} [Fact p.Prime]
     (S : MinimalNUS p n) (P : S.Pairing)
     {V : Type*} [Fintype V] [DecidableEq V] (B : LiveBlocks n V)
     (hlight : ∀ e : OrderedDistinct V,
@@ -2089,8 +2086,7 @@ theorem CompressionState.isEdgeRow_symm {p n : ℕ} {S : MinimalNUS p n}
     rw [Submodule.Quotient.mk_neg, map_neg]
     ext u
     have hu := congrFun h u
-    simp only [Finsupp.neg_apply, Pi.neg_apply, Pi.single_apply,
-      Pi.sub_apply] at hu ⊢
+    simp only [Finsupp.neg_apply, Pi.neg_apply, Pi.single_apply] at hu ⊢
     rw [hu]
   · intro h
     change (fun u => st.basis.repr (Submodule.Quotient.mk (-r)) (Sum.inr u)) = _
@@ -2105,7 +2101,7 @@ theorem CompressionState.isEdgeRow_symm {p n : ℕ} {S : MinimalNUS p n}
     rw [Submodule.Quotient.mk_neg, map_neg]
     ext u
     have hu := congrFun h u
-    simp only [Finsupp.neg_apply, Pi.neg_apply, Pi.single_apply,
+    simp only [Finsupp.neg_apply, Pi.single_apply,
       Pi.sub_apply] at hu ⊢
     rw [hu]
     ring
@@ -2153,7 +2149,7 @@ theorem CompressionState.exists_pivot_of_unitGraph_adj {p n : ℕ}
     [Fintype C] [DecidableEq C] [Fintype V] [DecidableEq V]
     (st : CompressionState S P C V) {R : ℤ} (v : V) (y : Option V)
     (hvy : (st.unitGraph R).Adj (some v) y) :
-    ∃ (r : Fin n → ℤ) (hr : r ∈ S.colLat P)
+    ∃ (r : Fin n → ℤ) (_hr : r ∈ S.colLat P)
         (parent : Option {u : V // u ≠ v}),
       st.basis.repr (Submodule.Quotient.mk r) (Sum.inr v) = 1 ∧
       (∀ u : {u : V // u ≠ v},
@@ -2244,7 +2240,7 @@ theorem CompressionState.exists_unitGraph_neighbor_at {p n : ℕ}
   · have hai : a = i := by
       by_contra h
       have := congrFun ha i
-      simp [w, Pi.single_apply, h] at this hi
+      simp [w, h] at this hi
       omega
     subst a
     exact ⟨none, (st.unitGraph_adj_of_row hr hR (by simp)
@@ -2255,27 +2251,27 @@ theorem CompressionState.exists_unitGraph_neighbor_at {p n : ℕ}
         intro hbi
         subst b
         have hv := congrFun ha i
-        simp [w, Pi.single_apply, hia] at hv hi
+        simp [w, hia] at hv hi
         omega
       have hv := congrFun ha i
-      simp [w, Pi.single_apply, hia, hbi] at hv hi
+      simp [w, hia, hbi] at hv hi
       omega
     subst a
     exact ⟨some b, st.unitGraph_adj_of_row hr hR (by simp [hab])
       (by simpa [CompressionState.IsEdgeRow, w] using ha)⟩
   · have hv := congrFun ha i
     exfalso
-    by_cases hai : a = i <;> simp [w, Pi.single_apply, hai] at hv hi <;> omega
+    by_cases hai : a = i <;> simp [w, hai] at hv hi <;> omega
   · have hbi : b = i := by
       by_contra hbi
       have hai : a ≠ i := by
         intro hai
         subst a
         have hv := congrFun ha i
-        simp [w, Pi.single_apply, hbi] at hv hi
+        simp [w, hbi] at hv hi
         omega
       have hv := congrFun ha i
-      simp [w, Pi.single_apply, hai, hbi] at hv hi
+      simp [w, hai, hbi] at hv hi
       omega
     subst b
     exact ⟨some a, st.unitGraph_adj_of_row hr hR
@@ -2481,15 +2477,14 @@ theorem exists_high_anchor_sample :
     have hle := Finset.card_le_card hsub
     rw [hcardImage] at hle
     exact le_trans (Nat.mul_le_mul_left 8 hle) hBad
-  · push_neg at hndex
+  · push Not at hndex
     refine ⟨∅, ?_, ?_⟩
     · simp
       positivity
     · have hzero : ((st.promote (∅ : Finset V)).isolatedLive (8 * M)).card = 0 := by
         apply Finset.card_eq_zero.mpr
         apply Finset.eq_empty_iff_forall_notMem.mpr
-        intro v
-        intro hv
+        intro v hv
         have hviso : ∀ y,
             ¬((st.promote (∅ : Finset V)).unitGraph (8 * M)).Adj (some v) y := by
           simpa [CompressionState.isolatedLive] using hv
@@ -2654,7 +2649,7 @@ structure ForestPivotPlan {p n : ℕ} {S : MinimalNUS p n} {P : S.Pairing}
   decreases : ∀ v y, parent v = some y → rank y < rank (some v)
   rank_le_three : ∀ v : V, rank (some v) ≤ 3
   pivotData : ∀ v y, parent v = some y →
-    ∃ (r : Fin n → ℤ) (hr : r ∈ S.colLat P)
+    ∃ (r : Fin n → ℤ) (_hr : r ∈ S.colLat P)
         (pivParent : Option {u : V // u ≠ v}),
       st.basis.repr (Submodule.Quotient.mk r) (Sum.inr v) = 1 ∧
       (∀ u : {u : V // u ≠ v},
@@ -2932,7 +2927,7 @@ theorem chosenRow_live_core_parent (plan : ForestPivotPlan st R) {v : V}
     simpa [Pi.single_apply] using hs.1
   · let u' : {u : V // u ≠ v} := ⟨u, huv⟩
     have hu := hs.2.1 u'
-    simp [hp, Pi.single_apply, huv, u'] at hu ⊢
+    simp [hp, huv, u'] at hu ⊢
     exact hu
 
 /-- Exact live-coordinate vector of a row pointing to a live parent. -/
@@ -2951,12 +2946,12 @@ theorem chosenRow_live_live_parent (plan : ForestPivotPlan st R) {v w : V}
     by_cases huw : u = w
     · subst u
       have heq : (⟨w, hwv⟩ : {u : V // u ≠ v}) = u' := Subtype.ext rfl
-      simp [hp, heq, Pi.single_apply, hwv, u'] at hu ⊢
+      simp [hp, heq, hwv, u'] at hu ⊢
       exact hu
     · have hne : some ⟨w, hwv⟩ ≠ some u' := by
         intro e
         exact huw (congrArg Subtype.val (Option.some.inj e)).symm
-      simp [hp, hne, Pi.single_apply, huv, huw, u'] at hu ⊢
+      simp [hp, hne, huv, huw, u'] at hu ⊢
       exact hu
 
 /-- Coefficients of the retained live representative reached from `v`. -/
@@ -3050,7 +3045,7 @@ theorem coreImage_norm_le_rank_mul (plan : ForestPivotPlan st R) (hR : 0 ≤ R)
           have hc := plan.coreImage_of_root vr
           have hcv : plan.coreImage v = 0 := by simpa [vr] using hc
           simp [hcv]
-          exact mul_nonneg (Int.ofNat_nonneg _) hR
+          exact mul_nonneg (Int.natCast_nonneg _) hR
       | some y =>
           cases y with
           | none =>
@@ -3173,7 +3168,7 @@ theorem forestMap_surjective (plan : ForestPivotPlan st R) :
   · change (∑ v : V, z (Sum.inr v) * plan.rootImage v w) = x (Sum.inr w)
     rw [Finset.sum_eq_single w.1]
     · have hw := plan.rootImage_of_root w
-      simp [z, w.2, hw, Pi.single_apply]
+      simp [z, w.2, hw]
     · intro v hv hvw
       by_cases hroot : plan.parent v = none
       · let vr : plan.Roots := ⟨v, hroot⟩
@@ -3181,7 +3176,7 @@ theorem forestMap_surjective (plan : ForestPivotPlan st R) :
           intro e
           exact hvw (congrArg Subtype.val e)
         have hr := plan.rootImage_of_root vr
-        simp [z, hroot, vr, hr, Pi.single_apply, hvrw]
+        simp [z, hroot, vr, hr, hvrw]
       · simp [z, hroot]
     · simp
 
@@ -3189,9 +3184,9 @@ private theorem sum_single_mul (a : V) (f : V → ℤ) :
     ∑ x : V, (Pi.single a (1 : ℤ) : V → ℤ) x * f x = f a := by
   classical
   rw [Finset.sum_eq_single a]
-  · simp [Pi.single_apply]
+  · simp
   · intro b hb hba
-    simp [Pi.single_apply, hba]
+    simp [hba]
   · simp
 
 private theorem sum_single_sub_mul (a b : V) (f : V → ℤ) :
@@ -3256,7 +3251,7 @@ theorem eq_zero_of_mem_ker_of_active_zero (plan : ForestPivotPlan st R)
           z (Sum.inr v) := by
         rw [Finset.sum_eq_single v]
         · have hr := plan.rootImage_of_root vr
-          simp [vr, hr, Pi.single_apply]
+          simp [vr, hr]
         · intro u hu huv
           by_cases huA : plan.parent u ≠ none
           · have hzA := hactive ⟨u, huA⟩
@@ -3267,7 +3262,7 @@ theorem eq_zero_of_mem_ker_of_active_zero (plan : ForestPivotPlan st R)
               intro e
               exact huv (congrArg Subtype.val e)
             have hr := plan.rootImage_of_root ur
-            simp [ur, hr, Pi.single_apply, hurne]
+            simp [ur, hr, hurne]
         · simp
       linarith
     · exact hactive ⟨v, hv⟩
@@ -3281,7 +3276,7 @@ theorem eq_zero_of_mem_ker_of_active_zero (plan : ForestPivotPlan st R)
       rw [hlive v, zero_mul]
     rw [hsum, add_zero] at hout
     simpa using hout
-  · simpa [hlive v]
+  · simp [hlive v]
 
 noncomputable def activeRowCoords (plan : ForestPivotPlan st R)
     (v : plan.Active) : Sum C V → ℤ := fun i =>
@@ -3468,8 +3463,7 @@ noncomputable def contract (plan : ForestPivotPlan st R) :
       rw [map_sum]
       simp_rw [map_smul]
       ext i
-      simp [Finset.sum_apply, activeRowCoords, activeRow, Finsupp.smul_apply,
-        Pi.smul_apply, smul_eq_mul]
+      simp [Finset.sum_apply, activeRowCoords, activeRow]
     have hquot : (Submodule.Quotient.mk x : (Fin n → ℤ) ⧸ st.Q) =
         Submodule.Quotient.mk q := by
       apply st.basis.equivFun.injective
@@ -3480,11 +3474,10 @@ noncomputable def contract (plan : ForestPivotPlan st R) :
       rw [← Submodule.ker_mkQ st.Q, LinearMap.mem_ker, map_sub, hquot', sub_self]
     have hdiff' := st.le_colLat hdiff
     have hadd := (S.colLat P).add_mem hdiff' hqmem
-    convert hadd using 1 <;> module
+    (convert hadd using 1; module)
   · intro a w
-    change b.repr (Submodule.Quotient.mk (Pi.single a 1)) (Sum.inr w) = _
     simp only [b, Module.Basis.map_repr, LinearEquiv.trans_apply, Pi.basisFun_repr,
-      e, LinearMap.quotKerEquivOfSurjective_apply_mk]
+      e]
     change (∑ v : V,
       st.basis.repr (Submodule.Quotient.mk (Pi.single a 1)) (Sum.inr v) *
         plan.rootImage v w) = _
@@ -3502,7 +3495,7 @@ noncomputable def contract (plan : ForestPivotPlan st R) :
       · rw [st.live_coord]
         by_cases hr : plan.terminalRoot v = some w
         · have hri : plan.rootImage v w = 1 := by
-            simp [rootImage, hr, Pi.single_apply]
+            simp [rootImage, hr]
           simp [contractedBlocks, howner, hr, hri]
         · have hri : plan.rootImage v w = 0 := by
             rcases htr : plan.terminalRoot v with _ | q
@@ -3511,7 +3504,7 @@ noncomputable def contract (plan : ForestPivotPlan st R) :
                 intro e
                 apply hr
                 rw [htr, e]
-              simp [rootImage, htr, Pi.single_apply, hqw]
+              simp [rootImage, htr, hqw]
           simp [contractedBlocks, howner, hr, hri]
       · intro u hu huv
         rw [st.live_coord]
@@ -3525,8 +3518,7 @@ theorem contract_core_coord (plan : ForestPivotPlan st R) (a : Fin n) (c : C) :
       st.basis.repr (Submodule.Quotient.mk (Pi.single a 1)) (Sum.inl c) +
         ∑ v : V, st.basis.repr (Submodule.Quotient.mk (Pi.single a 1))
           (Sum.inr v) * plan.coreImage v c := by
-  simp only [contract, Module.Basis.map_repr, LinearEquiv.trans_apply, Pi.basisFun_repr,
-    LinearMap.quotKerEquivOfSurjective_apply_mk]
+  simp only [contract, Module.Basis.map_repr]
   rfl
 
 /-- Simultaneous radius-three contraction preserves the core invariant, increasing
@@ -3695,7 +3687,7 @@ theorem DepartingSystem.exists_low_anchor_contract {p n : ℕ}
   refine ⟨plan, ?_, ?_⟩
   · dsimp [f] at hcard
     omega
-  · convert hcore using 1 <;> ring
+  · (convert hcore using 1; ring)
 
 /-- A compression state with its changing core and live index types existentially
 packed, so the round construction can be iterated. -/
@@ -3920,7 +3912,7 @@ theorem iterate_round_results (D₀ : ℝ) (hD₀ : 0 < D₀) (L mstar : ℕ)
                 nlinarith
               mass_charge := r₁.mass_charge
               coreBound := by
-                convert r₁.coreBound using 1 <;> norm_num
+                (convert r₁.coreBound using 1; norm_num)
               light := r₁.light
               rounds_le := by omega }⟩
         · have hmstar₁ : mstar ≤ r₁.next.liveCard := Nat.le_of_not_gt hterm₁
@@ -3943,7 +3935,6 @@ theorem iterate_round_results (D₀ : ℝ) (hD₀ : 0 < D₀) (L mstar : ℕ)
                   have hsqrt := sqrt_le_five_six_of_shrink r₁.live_shrink
                   have hsqrtD := mul_le_mul_of_nonneg_left hsqrt hD₀.le
                   have hroot : 0 ≤ Real.sqrt X.liveCard := Real.sqrt_nonneg _
-                  norm_cast at hs₁ hs₂
                   norm_num [Nat.cast_add] at ⊢
                   nlinarith
                 mass_charge := by
@@ -3952,7 +3943,7 @@ theorem iterate_round_results (D₀ : ℝ) (hD₀ : 0 < D₀) (L mstar : ℕ)
                   rw [Nat.mul_add]
                   omega
                 coreBound := by
-                  convert r₂.coreBound using 1 <;> norm_num <;> ring
+                  (convert r₂.coreBound using 1; norm_num; ring)
                 light := r₂.light
                 rounds_le := by omega }⟩
           · have hmstar₂ : mstar ≤ r₂.next.liveCard := Nat.le_of_not_gt hterm₂
@@ -4038,7 +4029,7 @@ theorem CompressionState.finish_any {p n E : ℕ} {S : MinimalNUS p n} {P : S.Pa
     have hq : Module.finrank ℤ ((Fin n → ℤ) ⧸ st.Q) = Fintype.card (Sum C V) := by
       simpa using Module.finrank_eq_card_basis st.basis
     have ha : Module.finrank ℤ (Fin n → ℤ) = n := by
-      simpa using Module.finrank_eq_card_basis (Pi.basisFun ℤ (Fin n))
+      simp
     have hr' : Fintype.card (Sum C V) + Module.finrank ℤ st.Q = n := by
       calc
         Fintype.card (Sum C V) + Module.finrank ℤ st.Q =
@@ -4105,7 +4096,7 @@ theorem CompressionState.finish {p n E : ℕ} {S : MinimalNUS p n} {P : S.Pairin
     have hq : Module.finrank ℤ ((Fin n → ℤ) ⧸ st.Q) = Fintype.card C := by
       simpa using Module.finrank_eq_card_basis st.basis
     have ha : Module.finrank ℤ (Fin n → ℤ) = n := by
-      simpa using Module.finrank_eq_card_basis (Pi.basisFun ℤ (Fin n))
+      simp
     have hr' : Fintype.card C + Module.finrank ℤ st.Q = n := by
       calc
         Fintype.card C + Module.finrank ℤ st.Q =
@@ -4264,7 +4255,7 @@ theorem compression :
     simp [X₀, PackedCompressionState.liveCard, PackedCompressionState.initial]
   rw [hLive0] at hsample
   have hheavy' : (out.heavyCost : ℝ) ≤ 6 * (n / Real.log p) := by
-    convert hheavy using 1 <;> ring
+    (convert hheavy using 1; ring)
   have hCcoef : 12 * D₀ + mstar + 6 ≤ (C : ℝ) := by linarith
   have hA0 : (0 : ℝ) ≤ Real.sqrt n := Real.sqrt_nonneg _
   have hB0 : (0 : ℝ) ≤ (n : ℝ) / Real.log p := by positivity

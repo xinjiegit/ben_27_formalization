@@ -249,7 +249,7 @@ theorem MinimalNUS.quotient_collision_rank {p n K : ℕ} (S : MinimalNUS p n)
   have hbfin : Module.finrank ℤ ((Fin n → ℤ) ⧸ Q) = K := by
     simpa using Module.finrank_eq_card_basis b
   have hamb : Module.finrank ℤ (Fin n → ℤ) = n := by
-    simpa using Module.finrank_eq_card_basis (Pi.basisFun ℤ (Fin n))
+    simp
   have hsumQ : K + (n - K) = n := by
     calc
       K + (n - K) = Module.finrank ℤ ((Fin n → ℤ) ⧸ Q) +
@@ -475,7 +475,7 @@ theorem key_inequality_proof :
     simpa using Module.finrank_eq_card_basis b
   have hambient := Q.finrank_quotient_add_finrank
   have hamb : Module.finrank ℤ (Fin n → ℤ) = n := by
-    simpa using Module.finrank_eq_card_basis (Pi.basisFun ℤ (Fin n))
+    simp
   have hsumQ : K + (n - K) = n := by
     calc
       K + (n - K) = Module.finrank ℤ ((Fin n → ℤ) ⧸ Q) + Module.finrank ℤ Q := by

@@ -1,5 +1,9 @@
 import Mathlib
 
+-- The challenge statement is intentionally unproved; Comparator checks it against
+-- the completed declaration in `Solution.lean`.
+set_option warn.sorry false
+
 /-!
 # A near-quadratic lower bound for sets with no unique sums
 

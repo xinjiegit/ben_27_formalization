@@ -167,7 +167,7 @@ theorem expect_option {i : Type*} [Fintype i] [DecidableEq i] [DecidableEq (Opti
     (fun ω => (∏ t, if ω t then θ else 1 - θ) * F ω)]
   rw [Fintype.sum_prod_type, Fintype.sum_bool]
   simp only [piOptionEquivProd_symm_apply, Fintype.prod_option, optionOutcome_none,
-    optionOutcome_some, Bool.true_eq, if_true, Bool.false_eq_true, if_false]
+    optionOutcome_some, if_true, Bool.false_eq_true, if_false]
   change (∑ a : i → Bool, (θ * ∏ t, if a t then θ else 1 - θ) *
       F (optionOutcome true a))
     + ∑ a : i → Bool, ((1 - θ) * ∏ t, if a t then θ else 1 - θ) *
@@ -366,6 +366,7 @@ theorem expect_cylinder (θ : ℝ) (S T : Finset ι) (hd : Disjoint S T) :
 def merge (p : ι → Prop) [DecidablePred p] (a : {i // p i} → Bool) (b : {i // ¬ p i} → Bool) :
     ι → Bool := fun i => if h : p i then a ⟨i, h⟩ else b ⟨i, h⟩
 
+omit [DecidableEq ι] in
 theorem wt_merge (θ : ℝ) (p : ι → Prop) [DecidablePred p]
     (a : {i // p i} → Bool) (b : {i // ¬ p i} → Bool) :
     wt θ (merge p a b) = wt θ a * wt θ b := by
@@ -434,7 +435,7 @@ theorem lin_le_one_sub_pow {θ : ℝ} (hθ0 : 0 ≤ θ) (hθ1 : θ ≤ 1) {d : �
   linarith
 
 /-- `(1-θ)^n ≤ exp (-θ n)`. -/
-theorem one_sub_pow_le_exp {θ : ℝ} (hθ0 : 0 ≤ θ) (hθ1 : θ ≤ 1) (n : ℕ) :
+theorem one_sub_pow_le_exp {θ : ℝ} (_hθ0 : 0 ≤ θ) (hθ1 : θ ≤ 1) (n : ℕ) :
     (1 - θ) ^ n ≤ Real.exp (-(θ * n)) := by
   have h1 : 1 - θ ≤ Real.exp (-θ) := by
     have := Real.add_one_le_exp (-θ)
@@ -446,7 +447,7 @@ theorem one_sub_pow_le_exp {θ : ℝ} (hθ0 : 0 ≤ θ) (hθ1 : θ ≤ 1) (n : �
 
 theorem exp_neg_eight_le : Real.exp (-8) ≤ (1 / 256 : ℝ) := by
   have h2 : (2 : ℝ) ≤ Real.exp 1 := by
-    convert Real.add_one_le_exp 1 using 1 <;> norm_num
+    (convert Real.add_one_le_exp 1 using 1; norm_num)
   have hp : (256 : ℝ) ≤ Real.exp 1 ^ (8 : ℕ) := by
     calc (256 : ℝ) = 2 ^ (8 : ℕ) := by norm_num
       _ ≤ Real.exp 1 ^ (8 : ℕ) := pow_le_pow_left₀ (by norm_num) h2 8
@@ -638,6 +639,7 @@ section Coverage
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
+omit [Fintype V] in
 /-- A `Finset V` of cardinality `≤ 2` containing the support of a `Sym2 V`. -/
 theorem sym2_card_le (z : Sym2 V) (s : Finset V) (h : ∀ v ∈ s, v ∈ z) : s.card ≤ 2 := by
   induction z using Sym2.inductionOn with
@@ -648,6 +650,7 @@ theorem sym2_card_le (z : Sym2 V) (s : Finset V) (h : ∀ v ∈ s, v ∈ z) : s.
     calc s.card ≤ ({x, y} : Finset V).card := Finset.card_le_card hsub
       _ ≤ 2 := le_trans (Finset.card_insert_le _ _) (by simp)
 
+omit [Fintype V] in
 /-- Every `Sym2` element supported in `H` lies in the image of `H ×ˢ H`. -/
 theorem sym2_mem_image_product (H : Finset V) (z : Sym2 V) (h : ∀ v ∈ z, v ∈ H) :
     z ∈ (H ×ˢ H).image (fun p : V × V => s(p.1, p.2)) := by
@@ -722,6 +725,7 @@ theorem exists_large_retained (F : Finset (Configuration V)) :
 /-- The vertices on the "off" side of the partition `σ`. -/
 def offSide (σ : V → Bool) : Finset V := Finset.univ.filter (fun v => σ v = false)
 
+omit [DecidableEq V] in
 theorem mem_offSide {σ : V → Bool} {v : V} : v ∈ offSide σ ↔ σ v = false := by
   unfold offSide; simp
 
@@ -729,6 +733,7 @@ theorem mem_offSide {σ : V → Bool} {v : V} : v ∈ offSide σ ↔ σ v = fals
 def covSet (R : Finset (Configuration V)) (v : V) : Finset V :=
   (R.filter (fun c => v ∈ c.τ)).image Configuration.j
 
+omit [Fintype V] in
 theorem mem_covSet {R : Finset (Configuration V)} {v u : V} :
     u ∈ covSet R v ↔ ∃ c ∈ R, v ∈ c.τ ∧ c.j = u := by
   unfold covSet
@@ -979,7 +984,6 @@ theorem miss_bound (θ : ℝ) (hθ0 : 0 < θ) (hθ1 : θ ≤ 1)
         have h2 : ((R.filter (fun c => ¬ ∀ v ∈ c.τ, v ∈ H)).card : ℝ)
             ≤ ∑ v ∈ Hc, ((covSet R v).card : ℝ) := by
           have := hdouble
-          push_cast
           exact_mod_cast this
         have h3 : ((R.filter (fun c => ∀ v ∈ c.τ, v ∈ H)).card : ℝ)
             + ((R.filter (fun c => ¬ ∀ v ∈ c.τ, v ∈ H)).card : ℝ) = (R.card : ℝ) := by

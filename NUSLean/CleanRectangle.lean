@@ -138,8 +138,8 @@ theorem sum_sq_isub_le_two {α : Type*} [Fintype α] [DecidableEq α] (a b : α)
           intro k
           by_cases ha : k = a
           · have hb : k ≠ b := fun e => h (ha.symm.trans e)
-            simp [ha, hb, h]
-          · by_cases hb : k = b <;> simp [ha, hb, h, Ne.symm h]
+            simp [ha, h]
+          · by_cases hb : k = b <;> simp [ha, hb, Ne.symm h]
         simp_rw [hp, Finset.sum_add_distrib]
         norm_num
       _ ≤ 2 := le_rfl
@@ -582,7 +582,7 @@ theorem finrank_rectRows_ge (S : MinimalNUS p n) (P : S.Pairing)
     have hr := LinearMap.finrank_le_finrank_of_injective hev
     simpa [Module.finrank_pi] using hr
   have hrn := LinearMap.finrank_range_add_finrank_ker A.mulVecLin
-  have hdomain : Module.finrank ℚ (↑U → ℚ) = U.card := by simp [Module.finrank_pi]
+  have hdomain : Module.finrank ℚ (↑U → ℚ) = U.card := by simp
   rw [hdomain] at hrn
   have hrange : U.card - 2 ≤ Module.finrank ℚ (LinearMap.range A.mulVecLin) := by omega
   have hrank : A.rank = Module.finrank ℚ (LinearMap.range A.mulVecLin) := rfl
@@ -638,7 +638,7 @@ theorem clean_rectangle [Fact p.Prime] (S : MinimalNUS p n) (P : S.Pairing)
     have hiyX : iy ∉ X' := fun h => Finset.disjoint_left.mp hXY' h hiy
     have hextra : ∃ z, (z ∈ X' ∧ z ≠ ix) ∨ (z ∈ Y' ∧ z ≠ iy) := by
       by_contra h
-      push_neg at h
+      push Not at h
       have hxle : X'.card ≤ 1 := by
         apply Finset.card_le_one.mpr
         intro a ha b hb
@@ -768,7 +768,7 @@ theorem clean_rectangle [Fact p.Prime] (S : MinimalNUS p n) (P : S.Pairing)
         exact Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _)
           (fun k _ _ => sq_nonneg _)
       have hfour := sum_sq_rho_rectangle_le_four S P hXY' hinv' (r i)
-      simp only [PiLp.toLp_apply, Real.norm_eq_abs, sq_abs]
+      simp only [Real.norm_eq_abs, sq_abs]
       dsimp only [BR, Matrix.map_apply]
       change (∑ j : Fin d, (((B i j : ℤ) : ℝ) ^ 2)) ≤ 2 ^ 2
       rw [show (2 : ℝ) ^ 2 = 4 by norm_num]
