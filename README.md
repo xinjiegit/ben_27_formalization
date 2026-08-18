@@ -1,19 +1,60 @@
-# NUSLean — formalization of "A near-quadratic lower bound for sets with no unique sums"
+# NUSLean
 
-Lean 4 (toolchain `v4.32.0`) + Mathlib formalization of the paper `../NUS_edited.tex`
-(working draft of July 21, 2026), which proves
+Lean 4 + Mathlib formalization of *A near-quadratic lower bound for sets with no
+unique sums*.  The corresponding working paper is committed as
+[`NUS_edited.tex`](NUS_edited.tex).
+
+The headline result is
 
 > **Theorem 1.2.** `m(p) ≫ (log p / log log p)²`,
 
 where `m(p)` is the least size of a set `A ⊆ 𝔽_p`, `|A| ≥ 2`, in which every element of
 `A + A` has at least two unordered representations (Problem 27 in Green's list).
 
+The formalization proves the lower bound.  It does not re-formalize Bedert's
+external `O((log p)²)` upper bound, so the paper's full asymptotic corollary uses
+that cited result in addition to the Lean theorem.
+
+## Authors, process, and licence
+
+The formalization and working paper are maintained by Xinjie.  The work combined
+human mathematical direction with AI-assisted proof engineering using OpenAI
+Codex; [`formalization.yaml`](formalization.yaml) records the process, provenance,
+scope, fidelity notes, and review status in detail.  No independent human peer
+review of the complete Lean development is claimed.
+
+The repository is distributed under the [Apache License 2.0](LICENSE).  The
+licence applies to this repository snapshot; cited papers and dependencies retain
+their own licences.
+
 ## Build
 
 ```sh
-cd NUSLean
-lake build          # Mathlib is prebuilt in .lake/packages; only this project compiles
+git clone https://github.com/xinjiegit/ben_27_formalization.git
+cd ben_27_formalization
+lake exe cache get
+lake build
+lake build Challenge Solution
 ```
+
+The project pins Lean `v4.32.0`, Mathlib, and its complete dependency closure in
+`lean-toolchain` and `lake-manifest.json`.
+
+## Palomar verification surface
+
+This repository uses Palomar's ordinary root layout:
+
+| File | Role |
+|---|---|
+| `Challenge.lean` | short, Mathlib-only statement surface for mathematical audit |
+| `Solution.lean` | exposes the completed proof from `NUSLean.Main` |
+| `comparator.json` | records `NUS.m_lower_bound` and the permitted axioms |
+| `formalization.yaml` | structured provenance, scope, automation, and review metadata |
+
+`Challenge.lean` intentionally contains one `sorry`.  This is the statement hole
+that Comparator fills with the declaration exposed by `Solution.lean`; it is not a
+hole in the proof development.  The Palomar submission form is at
+<https://submit.palomar-registry.org/>.
 
 ## File map
 
@@ -27,12 +68,13 @@ lake build          # Mathlib is prebuilt in .lake/packages; only this project c
 | `NUSLean/Contraction.lean` | §3, Lemma 3.2 | bounded-radius forest contraction (proved) |
 | `NUSLean/Compression.lean` | §4, Prop. 4.1 | proved compression to `O(√n + n/log p)` core coordinates |
 | `NUSLean/FinalDeterminant.lean` | §5 | proved determinant bridge and its linear-algebra helpers |
-| `NUSLean/Main.lean` | §5, Thm 1.2 | arithmetic endgame (proved), **Theorem 1.2** and the `m(p)` corollary (proved from the bridge) |
+| `NUSLean/Main.lean` | §5, Thm 1.2 | arithmetic endgame, strengthened setwise bound, and **Theorem 1.2** for `m(p)` (all proved from the bridge) |
 
 ## Proof status
 
-**Fully proved** (checked sorry-free via `#print axioms`, using only
-`propext`, `Classical.choice`, `Quot.sound`):
+**The proof development is fully proved.**  Excluding the deliberate statement
+hole in `Challenge.lean`, it is sorry-free.  `#print axioms` reports only
+`propext`, `Classical.choice`, and `Quot.sound` for both headline declarations.
 
 * Definition layer: `hasNoUniqueSum_empty`, `hasNoUniqueSum_univ`
   (`𝔽_p` itself has no unique sum for odd `p`, so `m p` is attained: `m_spec`),
@@ -64,9 +106,10 @@ lake build          # Mathlib is prebuilt in .lake/packages; only this project c
   `ℓ¹` determinant bound, and the resulting logarithmic inequality.
 * `numeric_reduction` — the closing arithmetic of §5: from
   `X ≤ C(√n + n/X)·log n` (with `X = log p`) deduce `n ≥ c(X/log X)²`.
-* `main_lower_bound` (**Theorem 1.2**) and `m_lower_bound` (**Corollary**) — proved
-  without missing premises. Their proofs perform the actual reduction: minimal
-  subexample → enumeration → pairing → determinant bridge → numeric endgame.
+* `main_lower_bound` (the strengthened setwise form) and `m_lower_bound`
+  (**Theorem 1.2**, and the lower-bound half of the corollary) — proved without
+  missing premises. Their proofs perform the actual reduction: minimal subexample →
+  enumeration → pairing → determinant bridge → numeric endgame.
 
 ## Design notes
 

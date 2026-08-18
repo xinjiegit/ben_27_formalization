@@ -10,9 +10,11 @@ This file assembles the proof of Theorem 1.2:
   factored into `FinalDeterminant.lean`.
 * `numeric_reduction` — the closing arithmetic: the displayed inequality forces
   `n ≫ (log p / log log p)²`.  Proved.
-* `main_lower_bound` — **Theorem 1.2**, proved from the two ingredients above together
-  with the Section 1 results (inclusion-minimal extraction, existence of a pairing).
-* `m_lower_bound` — the lower-bound half of the **Corollary** `m(p) = (log p)^{2+o(1)}`.
+* `main_lower_bound` — the strengthened setwise form used to prove **Theorem 1.2**,
+  proved from the two ingredients above together with the Section 1 results
+  (inclusion-minimal extraction, existence of a pairing).
+* `m_lower_bound` — **Theorem 1.2** as stated for `m(p)`; it is also the lower-bound
+  half of the **Corollary** `m(p) = (log p)^{2+o(1)}`.
 -/
 import NUSLean.FinalDeterminant
 
@@ -130,9 +132,10 @@ theorem numeric_reduction (C : ℝ) (hC : 0 < C) :
           apply mul_le_mul_of_nonneg_left hdiv (by positivity)
       _ = n := by field_simp
 
-/-- **Theorem 1.2.**  There is an absolute constant `c > 0` such that, for every
-sufficiently large prime `p`, every set `A ⊆ 𝔽_p` with `|A| ≥ 2` having no unique sum
-satisfies `|A| ≥ c (log p / log log p)²`. -/
+/-- The strengthened setwise form of **Theorem 1.2**.  There is an absolute constant
+`c > 0` such that, for every sufficiently large prime `p`, every set `A ⊆ 𝔽_p` with
+`|A| ≥ 2` having no unique sum satisfies
+`|A| ≥ c (log p / log log p)²`. -/
 theorem main_lower_bound :
     ∃ c : ℝ, 0 < c ∧ ∃ p₀ : ℕ, ∀ p : ℕ, Fact p.Prime → p₀ ≤ p →
       ∀ A : Finset (ZMod p), 2 ≤ A.card → HasNoUniqueSum A →
@@ -154,9 +157,10 @@ theorem main_lower_bound :
   calc c * (Real.log p / Real.log (Real.log p)) ^ 2 ≤ B.card := hnum'
     _ ≤ A.card := by exact_mod_cast Finset.card_le_card hBA
 
-/-- The lower-bound half of the **Corollary**: `m(p) ≥ c (log p / log log p)²` for all
-sufficiently large primes `p`; together with Bedert's construction
-`m(p) = O((log p)²)`, this gives `m(p) = (log p)^{2+o(1)}`. -/
+/-- **Theorem 1.2.**  For all sufficiently large primes,
+`m(p) ≥ c (log p / log log p)²`.  This is also the lower-bound half of the
+**Corollary**; together with Bedert's construction `m(p) = O((log p)²)`, it gives
+`m(p) = (log p)^{2+o(1)}`. -/
 theorem m_lower_bound :
     ∃ c : ℝ, 0 < c ∧ ∃ p₀ : ℕ, ∀ p : ℕ, Fact p.Prime → p₀ ≤ p →
       c * (Real.log p / Real.log (Real.log p)) ^ 2 ≤ m p := by

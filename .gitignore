@@ -1,1 +1,11 @@
-.lake
+.lake/
+.cache/
+.DS_Store
+
+# Local LaTeX build products.
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz

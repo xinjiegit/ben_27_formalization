@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  metadata:
+    name: Check submission metadata
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Validate formalization metadata
+        run: ruby scripts/validate-formalization.rb
+      - name: Validate Comparator JSON
+        run: python3 -m json.tool comparator.json >/dev/null
+      - name: Check required submission files
+        run: >-
+          test -s LICENSE && test -s Challenge.lean && test -s Solution.lean &&
+          test -s comparator.json && test -s formalization.yaml &&
+          test -s lake-manifest.json && test -s lean-toolchain
+
+  build:
+    name: Build proof and verification modules
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9
+        with:
+          build: true
+      - name: Build Palomar statement and solution surfaces
+        run: lake build Challenge Solution
+
+  comparator:
+    name: Compare advertised statement with proof
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9
+        with:
+          build: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e
+        with:
+          go-version: "1.24.0"
+          cache: false
+      - name: Run pinned Comparator and NanoDa toolchain
+        run: ./scripts/verify-comparator.sh

@@ -1,0 +1,145 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+version: "v0.4"
+
+project:
+  name: "NUSLean"
+  description: >-
+    A Lean 4 and Mathlib formalization of a near-quadratic lower bound for the
+    minimum size of a subset of a prime field in which no sum has a unique
+    unordered representation.
+  authors:
+    - "Xinjie"
+  license: "Apache-2.0"
+  responsible_maintainers:
+    - "Xinjie"
+
+classification:
+  arxiv: [math.CO, math.NT]
+  msc2020: [11B30, 11B34]
+
+sources:
+  - title: "A near-quadratic lower bound for sets with no unique sums"
+    authors:
+      - "Xinjie"
+    id: "NUS_edited.tex at the submitted repository commit"
+    type: "paper"
+    location: "NUS_edited.tex"
+    relationship: "formalizes"
+    note: >-
+      The Lean development formalizes the lower-bound theorem and its proof
+      from this working draft.  The draft is included in the repository so
+      that the informal and formal arguments can be reviewed together.
+    author_endorsement: "participated"
+  - title: "On unique sums in Abelian groups"
+    authors:
+      - "Benjamin Bedert"
+    id: "https://doi.org/10.1007/s00493-023-00069-w"
+    type: "paper"
+    location: "https://doi.org/10.1007/s00493-023-00069-w"
+    relationship: "background"
+    note: >-
+      Background for the problem, the previously known lower bound, and the
+      upper-bound construction cited in the paper.  The upper bound is not
+      re-formalized here.
+    author_endorsement: "not-contacted"
+  - title: "100 open problems, Problem 27"
+    authors:
+      - "Ben Green"
+    id: "https://people.maths.ox.ac.uk/greenbj/papers/open-problems.pdf"
+    type: "paper"
+    location: "https://people.maths.ox.ac.uk/greenbj/papers/open-problems.pdf"
+    relationship: "background"
+    note: "The source of the open problem studied by the project."
+    author_endorsement: "not-contacted"
+
+related_formalizations: []
+
+status:
+  scope: >-
+    The project fully proves the near-quadratic lower bound, both for every
+    finite no-unique-sum set in a sufficiently large prime field and for the
+    minimum m(p).  It also formalizes the intermediate collision-lattice,
+    clean-rectangle, common-cut, contraction, compression, and determinant
+    arguments used by the proof.  The external O((log p)^2) upper bound is
+    cited but not formalized, so the project proves only the lower-bound half
+    of the paper's final asymptotic corollary.
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms: [propext, Classical.choice, Quot.sound]
+
+automation:
+  methods:
+    - method: "manual"
+      models: []
+      framework: "n/a"
+      tool_setup: >-
+        Human-directed theorem design, statement comparison, proof review,
+        and local Lean builds using the pinned project toolchain.
+      cost:
+        wall_time: "not tracked"
+        spend_usd: "not tracked"
+        hardware: "local development machine"
+      prompting_notes: "n/a"
+    - method: "agent"
+      models:
+        - "OpenAI Codex (GPT-5 family)"
+      framework: "Codex desktop"
+      tool_setup: >-
+        AI-assisted Lean proof development, repository inspection, statement
+        auditing, build verification, and Palomar submission preparation,
+        under human direction.
+      cost:
+        wall_time: "not tracked"
+        spend_usd: "not tracked"
+        hardware: "local development machine with hosted model inference"
+      prompting_notes: >-
+        Iterative natural-language requests were used to develop, diagnose,
+        audit, and package the formalization.  The complete prompt history is
+        not retained in this repository.
+  spend_usd: "not tracked"
+  notes: >-
+    The work combined human mathematical direction with AI-assisted proof
+    engineering.  Lean's kernel checks the final proof; AI review is not a
+    substitute for independent mathematical peer review.
+
+fidelity:
+  divergences: >-
+    The formal definition uses the paper's equivalent multiset formulation:
+    each unordered pair from A has a distinct equal-sum mate, with repeated
+    elements allowed.  The Lean proof makes "sufficiently large" explicit via
+    the threshold used internally (64).  The lower bound is fully formalized;
+    Bedert's external upper bound, and therefore the full asymptotic equality
+    in the paper's corollary, is not.
+
+review:
+  status: "self-assessed and agent-reviewed"
+  reviewers:
+    - "Xinjie"
+    - "OpenAI Codex"
+  notes: >-
+    The repository has been built with the pinned Lean toolchain, searched for
+    proof holes and prohibited proof mechanisms, and checked with #print
+    axioms on both headline declarations.  No independent human peer review
+    of the complete Lean development is claimed.
+
+alignment:
+  namespace: "NUS"
+  statements:
+    - source: "Theorem 1.2"
+      lean: "NUS.m_lower_bound"
+      module: "NUSLean.Main"
+      status: "proved"
+      note: >-
+        This is the headline lower bound for m(p) and the declaration recorded
+        in comparator.json.
+    - source: "Theorem 1.2, setwise form used in the proof"
+      lean: "NUS.main_lower_bound"
+      module: "NUSLean.Main"
+      status: "proved"
+      note: >-
+        This strengthens the minimum-cardinality statement to every finite set
+        with no unique sum and is used to derive NUS.m_lower_bound.
+
+acknowledgements: >-
+  Built with Lean 4 and Mathlib.  The project uses results and problem context
+  due to Benjamin Bedert and Ben Green, as cited above.

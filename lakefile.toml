@@ -1,6 +1,6 @@
 name = "NUSLean"
 version = "0.1.0"
-defaultTargets = ["NUSLean"]
+defaultTargets = ["NUSLean", "Challenge", "Solution"]
 
 [leanOptions]
 autoImplicit = false
@@ -13,3 +13,11 @@ rev = "v4.32.0"
 
 [[lean_lib]]
 name = "NUSLean"
+
+[[lean_lib]]
+name = "Challenge"
+roots = ["Challenge"]
+
+[[lean_lib]]
+name = "Solution"
+roots = ["Solution"]
