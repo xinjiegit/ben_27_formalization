@@ -53,6 +53,16 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
+      - name: Free disk space for the Comparator toolchain
+        # The hosted runner includes SDKs this job does not use.  Removing them
+        # leaves room for two Lean toolchains and Mathlib's compressed and
+        # decompressed caches.  These paths are on the ephemeral runner only.
+        run: |
+          df -h /
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          df -h /
       - uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9
         with:
           # This job installs a second Lean toolchain for Comparator.  Do not
